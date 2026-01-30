@@ -1,0 +1,110 @@
+#pragma once
+
+#include "stroid/config/config.h"
+#include "stroid/topology/topology.h"
+#include "stroid/topology/mapping.h"
+#include "stroid/topology/curvilinear.h"
+#include "stroid/utils/mesh_utils.h"
+#include "stroid/IO/mesh.h"
+
+/**
+ * @namespace stroid
+ * @brief Public API surface for the stroid mesh generation library.
+ *
+ * This namespace aggregates configuration, topology construction, mapping, and
+ * mesh utilities for building curvilinear multi-block meshes.
+ *
+ * @par Example: build a mesh programmatically
+ * @code
+ * #include <memory>
+ * #include "mfem.hpp"
+ * #include "fourdst/config/config.h"
+ * #include "stroid/stroid.h"
+ *
+ * int main() {
+ *     fourdst::config::Config<stroid::config::MeshConfig> cfg;
+ *     auto mesh = stroid::topology::BuildSkeleton(cfg);
+ *     stroid::topology::Finalize(*mesh, cfg);
+ *     stroid::topology::PromoteToHighOrder(*mesh, cfg);
+ *     stroid::topology::ProjectMesh(*mesh, cfg);
+ *     stroid::IO::SaveVTU(*mesh, "stroid");
+ * }
+ * @endcode
+ *
+ * @par Example: tweak config then visualize
+ * @code
+ * fourdst::config::Config<stroid::config::MeshConfig> cfg;
+ * cfg->order = 4;
+ * cfg->flattening = 0.1;
+ * auto mesh = stroid::topology::BuildSkeleton(cfg);
+ * stroid::topology::Finalize(*mesh, cfg);
+ * stroid::topology::PromoteToHighOrder(*mesh, cfg);
+ * stroid::topology::ProjectMesh(*mesh, cfg);
+ * stroid::IO::ViewMesh(*mesh, "Stroid Mesh", stroid::IO::VISUALIZATION_MODE::ELEMENT_ID, "localhost", 19916);
+ * @endcode
+ */
+namespace stroid {
+    /**
+     * @brief Version helpers for the stroid library.
+     */
+    struct version {
+        static constexpr int major = @STROID_VERSION_MAJOR@;
+        static constexpr int minor = @STROID_VERSION_MINOR@;
+        static constexpr int patch = @STROID_VERSION_PATCH@;
+        static constexpr const char* tag = "@STROID_VERSION_TAG@";
+
+        static std::string toString() {
+            std::string versionStr = std::to_string(major) + "." +
+                                     std::to_string(minor) + "." +
+                                     std::to_string(patch);
+            if (std::string(tag) != "") {
+                versionStr += "-" + std::string(tag);
+            }
+            return versionStr;
+        }
+
+        friend std::ostream& operator<<(std::ostream& os, const version&) {
+            os << toString();
+            return os;
+        }
+    };
+}
+
+/**
+ * @namespace std
+ * @brief Standard library extensions used by stroid.
+ *
+ * Provides a `std::formatter` specialization for `stroid::version` so it can
+ * be used with `std::format` and related APIs.
+ */
+// Overload format struct
+template <>
+struct std::formatter<stroid::version> : std::formatter<std::string> {
+    auto format(const stroid::version& v, auto& ctx) {
+        return std::formatter<std::string>::format(stroid::version::toString(), ctx);
+    }
+};
+
+/**
+ * @namespace stroid::config
+ * @brief Configuration types and defaults for mesh generation.
+ */
+namespace stroid::config {}
+
+/**
+ * @namespace stroid::topology
+ * @brief Topology construction and curvilinear mapping utilities.
+ */
+namespace stroid::topology {}
+
+/**
+ * @namespace stroid::IO
+ * @brief Mesh serialization and visualization helpers.
+ */
+namespace stroid::IO {}
+
+/**
+ * @namespace stroid::utils
+ * @brief Mesh inspection and validation utilities.
+ */
+namespace stroid::utils {}

@@ -74,12 +74,15 @@ subprojects/libconfig/
 subprojects/libcomposition/
 subprojects/GridFire/
 subprojects/tomlplusplus-*/
+subprojects/CLI11-*/
+
 
 qhull.wrap
 quill.wrap
 yaml-cpp.wrap
 cppad.wrap
 tomlplusplus.wrap
+gtest.wrap
 
 subprojects/quill.wrap
 

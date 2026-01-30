@@ -17,14 +17,13 @@ namespace stroid::IO {
 
     void SaveVTU(mfem::Mesh &mesh, const std::string &exportName) {
         mfem::ParaViewDataCollection pd(exportName, &mesh);
+        pd.SetDataFormat(mfem::VTKFormat::BINARY);
         pd.SetHighOrderOutput(true);
         pd.Save();
     }
 
-    void ViewMesh(mfem::Mesh &mesh, const std::string& title, const VISUALIZATION_MODE mode) {
-        char vishost[] = "localhost";
-        int  visport   = 19916;
-        mfem::socketstream sol_sock(vishost, visport);
+    void ViewMesh(mfem::Mesh &mesh, const std::string& title, const VISUALIZATION_MODE mode, const std::string &vishost, int visport) {
+        mfem::socketstream sol_sock(vishost.c_str(), visport);
         if (!sol_sock.is_open()) {
             std::cerr << "Unable to connect to GLVis server at "
                       << vishost << ':' << visport << std::endl;

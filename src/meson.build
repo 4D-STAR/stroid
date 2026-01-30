@@ -1,7 +1,9 @@
 dependencies = [
     mfem_dep,
-    config_dep
+    config_dep,
 ]
+
+subdir('include/stroid')
 
 stroid_include_files = include_directories('include')
 stroid_sources = files(
@@ -13,7 +15,7 @@ stroid_sources = files(
 )
 
 stroid_lib = static_library(
-    'stroid',
+    'libstroid',
     stroid_sources,
     include_directories: stroid_include_files,
     dependencies: dependencies,
