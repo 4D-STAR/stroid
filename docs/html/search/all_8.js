@@ -11,7 +11,6 @@ var searchData=
   ['mesh_5futils_2ecpp_8',['mesh_utils.cpp',['../mesh__utils_8cpp.html',1,'']]],
   ['mesh_5futils_2eh_9',['mesh_utils.h',['../mesh__utils_8h.html',1,'']]],
   ['meshconfig_10',['MeshConfig',['../structstroid_1_1config_1_1_mesh_config.html',1,'stroid::config']]],
-  ['meshes_11',['Example Meshes',['../index.html#autotoc_md7',1,'']]],
-  ['modeling_12',['A multi-block mesh generation tool for stellar modeling',['../index.html#autotoc_md1',1,'']]],
-  ['multi_20block_20mesh_20generation_20tool_20for_20stellar_20modeling_13',['A multi-block mesh generation tool for stellar modeling',['../index.html#autotoc_md1',1,'']]]
+  ['modeling_11',['A multi-block mesh generation tool for stellar modeling',['../index.html#autotoc_md1',1,'']]],
+  ['multi_20block_20mesh_20generation_20tool_20for_20stellar_20modeling_12',['A multi-block mesh generation tool for stellar modeling',['../index.html#autotoc_md1',1,'']]]
 ];

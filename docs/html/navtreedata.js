@@ -27,12 +27,13 @@ var NAVTREE =
   [ "stroid", "index.html", [
     [ "A multi-block mesh generation tool for stellar modeling", "index.html#autotoc_md1", null ],
     [ "Building and Installing", "index.html#autotoc_md2", [
-      [ "Building", "index.html#autotoc_md3", null ],
-      [ "Running", "index.html#autotoc_md4", null ],
-      [ "Configuration File", "index.html#autotoc_md5", null ],
-      [ "C++ Interface", "index.html#autotoc_md6", null ]
+      [ "Building", "index.html#autotoc_md3", [
+        [ "Uninstalling", "index.html#autotoc_md4", null ]
+      ] ],
+      [ "Running", "index.html#autotoc_md5", null ],
+      [ "Configuration File", "index.html#autotoc_md6", null ],
+      [ "C++ Interface", "index.html#autotoc_md7", null ]
     ] ],
-    [ "Example Meshes", "index.html#autotoc_md7", null ],
     [ "Funding", "index.html#autotoc_md8", null ],
     [ "Namespaces", "namespaces.html", [
       [ "Namespace List", "namespaces.html", "namespaces_dup" ],

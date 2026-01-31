@@ -122,15 +122,31 @@ Building</h2>
 <div class="line">meson compile -C build</div>
 <div class="line">meson test -C build</div>
 <div class="line">meson install -C build</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md4"></a>
+</div><!-- fragment --><h3><a class="anchor" id="autotoc_md4"></a>
+Uninstalling</h3>
+<p>To uninstall stroid, if you built it using meson and the default ninja backend, you can use the following command </p><div class="fragment"><div class="line">sudo ninja uninstall -C build</div>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md5"></a>
 Running</h2>
 <p>Stroid can be used either from the command line or from C++. The command line interface is the simplest way to get started. After installation, the <code>stroid generate</code> command should be available in your terminal.</p>
 <div class="fragment"><div class="line">stroid generate --help</div>
 </div><!-- fragment --><p>The main way to interface with this is through the subcommands (currently only <code>generate</code> and <code>info</code> are available):</p>
 <div class="fragment"><div class="line">stroid generate -c &lt;path/to/config/file.toml&gt;</div>
-</div><!-- fragment --><div class="fragment"><div class="line">stroid info -d</div>
-</div><!-- fragment --><p>to save the default configuration to a file named <code>default.toml</code></p>
-<h2><a class="anchor" id="autotoc_md5"></a>
+</div><!-- fragment --><p>One can change the output format by specificing one of the avalible output formats <b>after</b> generation options</p>
+<div class="fragment"><div class="line">stroid generate -c &lt;path/to/config/file.toml&gt; -o &quot;output.vtu&quot; vtu --ref 1</div>
+</div><!-- fragment --><p>each output format has its own options, which can be viewed by running</p>
+<div class="fragment"><div class="line">stroid generate [fmt] --help</div>
+</div><!-- fragment --><p>where <code>[fmt]</code> is replaced with the desired output format (e.g. vtu, netgen, mfem, etc.). Avalible output formats are:</p>
+<ul>
+<li>vtu: VTK Unstructured Grid format</li>
+<li>mfem: MFEM mesh format</li>
+<li>netgen: Netgen mesh format</li>
+<li>vtk: Legacy VTK format</li>
+<li>paraview: ParaView Data collection format</li>
+<li>info: Outputs mesh information to the terminal</li>
+</ul>
+<p>Further, mesh generation options are loaded from a toml file, a default version of this file can be saved by running </p><div class="fragment"><div class="line">stroid info -d</div>
+</div><!-- fragment --><p> which will save a default config file to <code>default.toml</code></p>
+<h2><a class="anchor" id="autotoc_md6"></a>
 Configuration File</h2>
 <p>Stroid uses a TOML configuration file to specify the parameters for mesh generation. An example configuration file is found below</p>
 <div class="fragment"><div class="line">[main]</div>
@@ -166,7 +182,7 @@ Configuration File</h2>
 <td class="markdownTableBodyNone">core_steepness   </td><td class="markdownTableBodyNone">The steepness of the transition between the core and envelope regions of the star   </td><td class="markdownTableBodyNone">1.0   </td></tr>
 </table>
 <p>If no configuration file is provided, stroid will use the default parameters listed above. Further, configuration files need only include parameters that differ from the defaults, any parameters not specified will use the default values.</p>
-<h2><a class="anchor" id="autotoc_md6"></a>
+<h2><a class="anchor" id="autotoc_md7"></a>
 C++ Interface</h2>
 <p>Stroid can be used as a library in C++ projects. After installation, include the stroid header and link against the stroid library.</p>
 <p>A basic example of using stroid in C++ is shown below (note that you will need a glvis instance running on localhost:19916 to visualize the mesh): </p><div class="fragment"><div class="line"><span class="preprocessor">#include &lt;memory&gt;</span></div>
@@ -200,10 +216,7 @@ C++ Interface</h2>
 <div class="ttc" id="anamespacestroid_1_1topology_html_a836ed13e5bac63e7952c3ce4e5532e78"><div class="ttname"><a href="namespacestroid_1_1topology.html#a836ed13e5bac63e7952c3ce4e5532e78">stroid::topology::ProjectMesh</a></div><div class="ttdeci">void ProjectMesh(mfem::Mesh &amp;mesh, const fourdst::config::Config&lt; config::MeshConfig &gt; &amp;config)</div><div class="ttdoc">Project high-order mesh nodes using the configured curvilinear mapping.</div><div class="ttdef"><b>Definition</b> curvilinear.cpp:14</div></div>
 <div class="ttc" id="anamespacestroid_1_1topology_html_abc0d8a1fb8e9c5ac0e259e4c93db7892"><div class="ttname"><a href="namespacestroid_1_1topology.html#abc0d8a1fb8e9c5ac0e259e4c93db7892">stroid::topology::BuildSkeleton</a></div><div class="ttdeci">std::unique_ptr&lt; mfem::Mesh &gt; BuildSkeleton(const fourdst::config::Config&lt; config::MeshConfig &gt; &amp;config)</div><div class="ttdoc">Build the initial multi-block mesh topology for the star model.</div><div class="ttdef"><b>Definition</b> topology.cpp:10</div></div>
 <div class="ttc" id="atopology_8h_html"><div class="ttname"><a href="topology_8h.html">topology.h</a></div></div>
-</div><!-- fragment --><h1><a class="anchor" id="autotoc_md7"></a>
-Example Meshes</h1>
-<p>An example mesh with the default configuration parameters is shown below (coloration indicates attribute IDs of different regions): <img src="assets/imgs/ExampleMesh.png" alt="Example Mesh" class="inline"/></p>
-<h1><a class="anchor" id="autotoc_md8"></a>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md8"></a>
 Funding</h1>
 <p>Stroid is developed as part of the 4D-STAR project.</p>
 <p>4D-STAR is funded by European Research Council (ERC) under the Horizon Europe programme (Synergy Grant agreement No. 101071505: 4D-STAR) Work for this project is funded by the European Union. Views and opinions expressed are however those of the author(s) only and do not necessarily reflect those of the European Union or the European Research Council. </p>
