@@ -25,6 +25,12 @@ meson test -C build
 meson install -C build
 ```
 
+#### Uninstalling
+To uninstall stroid, if you built it using meson and the default ninja backend, you can use the following command
+```bash
+sudo ninja uninstall -C build
+```
+
 ### Running
 Stroid can be used either from the command line or from C++. The command line interface is
 the simplest way to get started. After installation, the `stroid generate` command should be available in your terminal.
@@ -39,11 +45,32 @@ The main way to interface with this is through the subcommands (currently only `
 stroid generate -c <path/to/config/file.toml>
 ```
 
+One can change the output format by specificing one of the avalible output formats __after__ generation options
+
+```bash
+stroid generate -c <path/to/config/file.toml> -o "output.vtu" vtu --ref 1
+```
+
+each output format has its own options, which can be viewed by running
+
+```bash
+stroid generate [fmt] --help
+```
+
+where ``[fmt]`` is replaced with the desired output format (e.g. vtu, netgen, mfem, etc.). Avalible output formats are:
+
+- vtu: VTK Unstructured Grid format
+- mfem: MFEM mesh format
+- netgen: Netgen mesh format
+- vtk: Legacy VTK format
+- paraview: ParaView Data collection format
+- info: Outputs mesh information to the terminal
+
+Further, mesh generation options are loaded from a toml file, a default version of this file can be saved by running
 ```bash
 stroid info -d
 ```
-
-to save the default configuration to a file named ``default.toml``
+which will save a default config file to ``default.toml``
 
 ### Configuration File
 Stroid uses a TOML configuration file to specify the parameters for mesh generation. An example configuration
