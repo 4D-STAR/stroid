@@ -1,6 +1,7 @@
 gtest_dep = dependency('gtest', main: true, required : true)
 gtest_main = dependency('gtest_main', required: true)
 gtest_nomain_dep = dependency('gtest', main: false, required : true)
+threads_dep = dependency('threads')
 
 # Test files for const
 test_sources = [
@@ -14,6 +15,7 @@ foreach test_file : test_sources
         exe_name,
         test_file,
         dependencies: [
+            threads_dep,
             stroid_dep,
             gtest_dep,
             gtest_main
