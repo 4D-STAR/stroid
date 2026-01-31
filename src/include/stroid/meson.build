@@ -24,4 +24,6 @@ configure_file(
     input : 'stroid.h.in',
     output : 'stroid.h',
     configuration : config ,
+    install: true,
+    install_dir: get_option('includedir') / 'stroid'
 )

@@ -75,6 +75,7 @@ subprojects/libcomposition/
 subprojects/GridFire/
 subprojects/tomlplusplus-*/
 subprojects/CLI11-*/
+subprojects/magic_enum-*/
 
 
 qhull.wrap

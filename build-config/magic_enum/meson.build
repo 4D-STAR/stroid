@@ -1,0 +1,1 @@
+magic_enum_dep = dependency('magic_enum', required : true)

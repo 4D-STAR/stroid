@@ -27,3 +27,8 @@ stroid_dep = declare_dependency(
     include_directories: stroid_include_files,
     dependencies: dependencies
 )
+
+install_subdir(
+    'include/stroid',
+    install_dir: get_option('includedir') / 'stroid'
+)
