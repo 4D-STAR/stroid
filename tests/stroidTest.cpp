@@ -7,10 +7,13 @@
 #include "stroid/topology/mapping.h"
 #include "stroid/topology/topology.h"
 #include "stroid/utils/mesh_utils.h"
+#include "stroid/stroid.h"
 
 #include <cmath>
 #include <filesystem>
+#include <fstream>
 #include <cstdlib>
+#include <sstream>
 #include <string>
 #include <map>
 #include <set>
@@ -124,6 +127,94 @@ std::unique_ptr<mfem::Mesh> BuildProjectedMesh(const Config& cfg) {
     stroid::topology::PromoteToHighOrder(*mesh, cfg);
     stroid::topology::ProjectMesh(*mesh, cfg);
     return mesh;
+}
+
+void ExpectExteriorCoordinateRange(stroid::StroidMesh& stroid_mesh) {
+    ASSERT_NE(stroid_mesh.mesh, nullptr);
+    ASSERT_NE(stroid_mesh.exterior_coordinate, nullptr);
+    ASSERT_NE(stroid_mesh.exterior_coordinate->space, nullptr);
+    ASSERT_NE(stroid_mesh.exterior_coordinate->values, nullptr);
+    ASSERT_EQ(stroid_mesh.exterior_coordinate->space->GetMesh(), stroid_mesh.mesh.get());
+    ASSERT_EQ(stroid_mesh.exterior_coordinate->values->FESpace(), stroid_mesh.exterior_coordinate->space.get());
+
+    mfem::Mesh& mesh = *stroid_mesh.mesh;
+    mfem::GridFunction& coordinate = *stroid_mesh.exterior_coordinate->values;
+    const int vacuum_attribute = static_cast<int>(stroid_mesh.config.vacuum_id.value());
+    bool sampled_vacuum = false;
+
+    for (int element_id = 0; element_id < mesh.GetNE(); ++element_id) {
+        const mfem::FiniteElement& element = *stroid_mesh.exterior_coordinate->space->GetFE(element_id);
+        const mfem::IntegrationRule& integration_rule = mfem::IntRules.Get(element.GetGeomType(), 2 * element.GetOrder() + 4);
+
+        for (int q = 0; q < integration_rule.GetNPoints(); ++q) {
+            const double value = coordinate.GetValue(element_id, integration_rule.IntPoint(q));
+            EXPECT_TRUE(std::isfinite(value));
+
+            if (mesh.GetAttribute(element_id) == vacuum_attribute) {
+                sampled_vacuum = true;
+                EXPECT_GE(value, -1.0e-12);
+                EXPECT_LE(value, 1.0 + 1.0e-12);
+            } else {
+                EXPECT_NEAR(value, 0.0, 1.0e-12);
+            }
+        }
+    }
+
+    EXPECT_TRUE(sampled_vacuum);
+}
+
+void ExpectExteriorCoordinateBoundaryTraces(stroid::StroidMesh& stroid_mesh) {
+    ASSERT_NE(stroid_mesh.mesh, nullptr);
+    ASSERT_NE(stroid_mesh.exterior_coordinate, nullptr);
+    ASSERT_NE(stroid_mesh.exterior_coordinate->values, nullptr);
+
+    mfem::Mesh& mesh = *stroid_mesh.mesh;
+    mfem::GridFunction& coordinate = *stroid_mesh.exterior_coordinate->values;
+    const int vacuum_attribute = static_cast<int>(stroid_mesh.config.vacuum_id.value());
+    const int infinity_boundary = static_cast<int>(stroid_mesh.config.inf_bdr_id.value());
+    int stellar_vacuum_faces = 0;
+    int infinity_faces = 0;
+
+    for (int face_id = 0; face_id < mesh.GetNumFaces(); ++face_id) {
+        mfem::FaceElementTransformations* transformation = mesh.GetFaceElementTransformations(face_id);
+        if (transformation == nullptr || transformation->Elem1 == nullptr || transformation->Elem2 == nullptr) continue;
+
+        const bool element_1_vacuum = transformation->Elem1->Attribute == vacuum_attribute;
+        const bool element_2_vacuum = transformation->Elem2->Attribute == vacuum_attribute;
+        if (element_1_vacuum == element_2_vacuum) continue;
+
+        ++stellar_vacuum_faces;
+        const mfem::IntegrationRule& integration_rule = mfem::IntRules.Get(transformation->GetGeometryType(), 6);
+
+        for (int q = 0; q < integration_rule.GetNPoints(); ++q) {
+            const mfem::IntegrationPoint& face_point = integration_rule.IntPoint(q);
+            transformation->SetAllIntPoints(&face_point);
+
+            const int vacuum_element = element_1_vacuum ? transformation->Elem1No : transformation->Elem2No;
+            const mfem::IntegrationPoint& vacuum_point = element_1_vacuum ? transformation->Elem1->GetIntPoint() : transformation->Elem2->GetIntPoint();
+            EXPECT_NEAR(coordinate.GetValue(vacuum_element, vacuum_point), 0.0, 1.0e-12);
+        }
+    }
+
+    for (int boundary_element = 0; boundary_element < mesh.GetNBE(); ++boundary_element) {
+        if (mesh.GetBdrAttribute(boundary_element) != infinity_boundary) continue;
+
+        mfem::FaceElementTransformations* transformation = mesh.GetBdrFaceTransformations(boundary_element);
+        ASSERT_NE(transformation, nullptr);
+        ASSERT_NE(transformation->Elem1, nullptr);
+        ++infinity_faces;
+
+        const mfem::IntegrationRule& integration_rule = mfem::IntRules.Get(transformation->GetGeometryType(), 6);
+
+        for (int q = 0; q < integration_rule.GetNPoints(); ++q) {
+            const mfem::IntegrationPoint& face_point = integration_rule.IntPoint(q);
+            transformation->SetAllIntPoints(&face_point);
+            EXPECT_NEAR(coordinate.GetValue(transformation->Elem1No, transformation->Elem1->GetIntPoint()), 1.0, 1.0e-12);
+        }
+    }
+
+    EXPECT_GT(stellar_vacuum_faces, 0);
+    EXPECT_GT(infinity_faces, 0);
 }
 
 double ComputeStellarVolumeWithDomainLFIntegrator(mfem::Mesh& mesh, const Config& cfg) {
@@ -1043,6 +1134,134 @@ TEST_F(stroidTest, Refinement_UniformRefinementProducesExpectedElementCounts) {
     EXPECT_EQ(mesh.mesh->GetNE(), init_elements * 8);
 }
 
+TEST_F(stroidTest, ExteriorCoordinate_HasValidRangeAndExactBoundaryTraces) {
+    const auto cfg_ptr = LoadConfigFromRepo("configs/test_volume_with_external.toml");
+    const auto& cfg = *cfg_ptr;
+
+    stroid::StroidMesh mesh;
+    ASSERT_NO_THROW(mesh = stroid::GenerateMesh(cfg));
+
+    ExpectExteriorCoordinateRange(mesh);
+    ExpectExteriorCoordinateBoundaryTraces(mesh);
+}
+
+TEST_F(stroidTest, ExteriorCoordinate_IsRebuiltAfterUniformRefinement) {
+    const auto cfg_ptr = LoadConfigFromRepo("configs/test_volume_with_external.toml");
+    const auto& cfg = *cfg_ptr;
+
+    stroid::StroidMesh mesh;
+    ASSERT_NO_THROW(mesh = stroid::GenerateMesh(cfg));
+    ASSERT_NE(mesh.exterior_coordinate, nullptr);
+
+    const int initial_elements = mesh.mesh->GetNE();
+    const int initial_coordinate_dofs = mesh.exterior_coordinate->space->GetNDofs();
+
+    ASSERT_NO_THROW(stroid::refinement::UniformRefinement(mesh, 1));
+    ASSERT_NE(mesh.exterior_coordinate, nullptr);
+    EXPECT_EQ(mesh.mesh->GetNE(), initial_elements * 8);
+    EXPECT_GT(mesh.exterior_coordinate->space->GetNDofs(), initial_coordinate_dofs);
+
+    ExpectExteriorCoordinateRange(mesh);
+    ExpectExteriorCoordinateBoundaryTraces(mesh);
+}
+
+TEST_F(stroidTest, ExteriorCoordinate_SurvivesSaveAndLoad) {
+    const auto cfg_ptr = LoadConfigFromRepo("configs/test_volume_with_external.toml");
+    const auto& cfg = *cfg_ptr;
+
+    stroid::StroidMesh original;
+    ASSERT_NO_THROW(original = stroid::GenerateMesh(cfg));
+    ASSERT_NE(original.exterior_coordinate, nullptr);
+
+    const std::filesystem::path path = std::filesystem::temp_directory_path() / "stroid_exterior_coordinate_round_trip.smesh";
+    ASSERT_NO_THROW(stroid::IO::SaveStroidMesh(original, path.string(), "Exterior-coordinate round-trip test"));
+
+    auto loaded_result = stroid::IO::LoadStroidMesh(path.string());
+    if (!loaded_result.has_value()) FAIL() << loaded_result.error();
+    stroid::StroidMesh loaded = std::move(*loaded_result);
+
+    ASSERT_NE(loaded.exterior_coordinate, nullptr);
+    ASSERT_EQ(loaded.exterior_coordinate->space->GetNDofs(), original.exterior_coordinate->space->GetNDofs());
+    ASSERT_EQ(loaded.exterior_coordinate->values->Size(), original.exterior_coordinate->values->Size());
+
+    for (int dof = 0; dof < original.exterior_coordinate->values->Size(); ++dof) {
+        EXPECT_DOUBLE_EQ((*loaded.exterior_coordinate->values)(dof), (*original.exterior_coordinate->values)(dof));
+    }
+
+    ExpectExteriorCoordinateRange(loaded);
+    ExpectExteriorCoordinateBoundaryTraces(loaded);
+
+    std::error_code error;
+    std::filesystem::remove(path, error);
+    EXPECT_FALSE(error);
+}
+
+TEST_F(stroidTest, ExteriorCoordinate_IsAbsentWithoutExternalDomainAcrossSaveAndLoad) {
+    const auto cfg_ptr = LoadConfigFromRepo("configs/test_volume_spherical_no_external.toml");
+    const auto& cfg = *cfg_ptr;
+
+    stroid::StroidMesh original;
+    ASSERT_NO_THROW(original = stroid::GenerateMesh(cfg));
+    EXPECT_EQ(original.exterior_coordinate, nullptr);
+
+    const std::filesystem::path path = std::filesystem::temp_directory_path() / "stroid_no_exterior_coordinate_round_trip.smesh";
+    ASSERT_NO_THROW(stroid::IO::SaveStroidMesh(original, path.string(), "No-exterior-coordinate round-trip test"));
+
+    auto loaded_result = stroid::IO::LoadStroidMesh(path.string());
+    if (!loaded_result.has_value()) FAIL() << loaded_result.error();
+    EXPECT_EQ(loaded_result->exterior_coordinate, nullptr);
+
+    std::error_code error;
+    std::filesystem::remove(path, error);
+    EXPECT_FALSE(error);
+}
+
+TEST_F(stroidTest, ExteriorCoordinate_IsReconstructedWhenLoadingLegacyFiles) {
+    const auto cfg_ptr = LoadConfigFromRepo("configs/test_volume_with_external.toml");
+    const auto& cfg = *cfg_ptr;
+
+    stroid::StroidMesh original;
+    ASSERT_NO_THROW(original = stroid::GenerateMesh(cfg));
+    ASSERT_NE(original.exterior_coordinate, nullptr);
+
+    const std::filesystem::path path = std::filesystem::temp_directory_path() / "stroid_legacy_exterior_coordinate.smesh";
+    ASSERT_NO_THROW(stroid::IO::SaveStroidMesh(original, path.string(), "Legacy exterior-coordinate reconstruction test"));
+
+    std::ifstream input(path);
+    ASSERT_TRUE(input.is_open());
+    std::string contents((std::istreambuf_iterator<char>(input)), std::istreambuf_iterator<char>());
+
+    constexpr std::string_view begin_marker = "BEGIN BLOCK EXTERIOR_COORDINATE";
+    constexpr std::string_view end_marker = "END BLOCK EXTERIOR_COORDINATE";
+    const size_t begin = contents.find(begin_marker);
+    const size_t end_begin = contents.find(end_marker);
+    ASSERT_NE(begin, std::string::npos);
+    ASSERT_NE(end_begin, std::string::npos);
+
+    size_t end = end_begin + end_marker.size();
+    if (end < contents.size() && contents[end] == '\n') ++end;
+    contents.erase(begin, end - begin);
+
+    std::istringstream legacy_stream(contents);
+    auto loaded_result = stroid::IO::ParseStroidMesh(legacy_stream);
+    if (!loaded_result.has_value()) FAIL() << loaded_result.error();
+
+    stroid::StroidMesh loaded = std::move(*loaded_result);
+    ASSERT_NE(loaded.exterior_coordinate, nullptr);
+    ASSERT_EQ(loaded.exterior_coordinate->values->Size(), original.exterior_coordinate->values->Size());
+
+    for (int dof = 0; dof < original.exterior_coordinate->values->Size(); ++dof) {
+        EXPECT_NEAR((*loaded.exterior_coordinate->values)(dof), (*original.exterior_coordinate->values)(dof), 1.0e-12);
+    }
+
+    ExpectExteriorCoordinateRange(loaded);
+    ExpectExteriorCoordinateBoundaryTraces(loaded);
+
+    std::error_code error;
+    std::filesystem::remove(path, error);
+    EXPECT_FALSE(error);
+}
+
 TEST_F(stroidTest, Stats_ComputeStats) {
     const auto cfg_ptr = LoadConfigFromRepo("configs/test_volume_with_external.toml");
     const auto& cfg = *cfg_ptr;
@@ -1055,4 +1274,360 @@ TEST_F(stroidTest, Stats_ComputeStats) {
 
 }
 
+namespace {
 
+std::unique_ptr<Config> MultiBlockConfiguration(int order, int refinement, bool external, double flattening = 0.0) {
+    auto cfg = std::make_unique<Config>();
+    cfg->mutate([&](stroid::config::MeshConfig& value) {
+        value.core_mapping = "multi_block";
+        value.order = order;
+        value.refinement_levels = refinement;
+        value.include_external_domain = external;
+        value.flattening = flattening;
+        value.optimization_methods = stroid::config::OptimizationMethods{false, false};
+    });
+    return cfg;
+}
+
+// Unlike CollectConditioningStats, this uses the signed determinant, actual
+// singular values, and a closed sample grid including vertices/edges/faces.
+// Column-length ratios and open quadrature points miss the old core-corner defect.
+void ExpectClosedGridCoreConditioning(mfem::Mesh& mesh, int coreAttribute, double maximumCondition = 10.0) {
+    int coreElements = 0;
+    double largestCondition = 0.0;
+    double smallestDeterminant = std::numeric_limits<double>::infinity();
+    for (int element = 0; element < mesh.GetNE(); ++element) {
+        if (mesh.GetAttribute(element) != coreAttribute) continue;
+        ++coreElements;
+        auto* transformation = mesh.GetElementTransformation(element);
+        ASSERT_EQ(transformation->GetGeometryType(), mfem::Geometry::CUBE);
+        for (double x : {0.0, 0.01, 0.5, 0.99, 1.0}) {
+            for (double y : {0.0, 0.01, 0.5, 0.99, 1.0}) {
+                for (double z : {0.0, 0.01, 0.5, 0.99, 1.0}) {
+                    mfem::IntegrationPoint point;
+                    point.Set3(x, y, z);
+                    transformation->SetIntPoint(&point);
+                    const auto& jacobian = transformation->Jacobian();
+                    const double determinant = jacobian.Det();
+                    const double minimumSingular = jacobian.CalcSingularvalue(2);
+                    const double maximumSingular = jacobian.CalcSingularvalue(0);
+                    ASSERT_TRUE(std::isfinite(determinant));
+                    ASSERT_GT(determinant, 0.0) << "element=" << element << " point=" << x << ',' << y << ',' << z;
+                    ASSERT_TRUE(std::isfinite(minimumSingular));
+                    ASSERT_GT(minimumSingular, 0.0) << "element=" << element;
+                    const double condition = maximumSingular / minimumSingular;
+                    ASSERT_TRUE(std::isfinite(condition));
+                    ASSERT_LT(condition, maximumCondition)
+                        << "element=" << element << " point=" << x << ',' << y << ',' << z;
+                    smallestDeterminant = std::min(smallestDeterminant, determinant);
+                    largestCondition = std::max(largestCondition, condition);
+                }
+            }
+        }
+    }
+    EXPECT_GT(coreElements, 0);
+    EXPECT_GT(smallestDeterminant, 0.0);
+    EXPECT_LT(largestCondition, maximumCondition);
+}
+
+void ExpectCoreFaceContinuity(mfem::Mesh& mesh, int coreAttribute) {
+    int faces = 0;
+    mfem::Vector left(3), right(3);
+    for (int face = 0; face < mesh.GetNumFaces(); ++face) {
+        auto* transformation = mesh.GetFaceElementTransformations(face);
+        if (transformation == nullptr || transformation->Elem1 == nullptr || transformation->Elem2 == nullptr) continue;
+        if (transformation->Elem1->Attribute != coreAttribute && transformation->Elem2->Attribute != coreAttribute) continue;
+        ++faces;
+        for (double x : {0.0, 0.25, 0.5, 0.75, 1.0}) {
+            for (double y : {0.0, 0.25, 0.5, 0.75, 1.0}) {
+                mfem::IntegrationPoint point;
+                point.Set2(x, y);
+                transformation->SetAllIntPoints(&point);
+                transformation->Elem1->Transform(transformation->Elem1->GetIntPoint(), left);
+                transformation->Elem2->Transform(transformation->Elem2->GetIntPoint(), right);
+                left -= right;
+                EXPECT_LT(left.Norml2(), 2.0e-12) << "face=" << face;
+            }
+        }
+    }
+    EXPECT_GT(faces, 0);
+}
+
+} // namespace
+
+TEST_F(stroidTest, MultiBlockCore_TopologyCountsAndAttributesAreOptIn) {
+    EXPECT_EQ(stroid::config::MeshConfig{}.core_mapping.value(), "spherified");
+    for (const bool external : {false, true}) {
+        SCOPED_TRACE(external);
+        auto cfg = MultiBlockConfiguration(2, 0, external);
+        auto mesh = stroid::topology::BuildSkeleton(*cfg);
+        ASSERT_NE(mesh, nullptr);
+        EXPECT_EQ(mesh->GetNV(), external ? 32 : 24);
+        EXPECT_EQ(mesh->GetNE(), external ? 19 : 13);
+        EXPECT_EQ(mesh->GetNBE(), external ? 12 : 6);
+        const auto volumes = CountVolumeAttributes(*mesh);
+        EXPECT_EQ(volumes.at(1), 7);
+        EXPECT_EQ(volumes.at(2), 6);
+        EXPECT_EQ(volumes.contains(3), external);
+        if (external) EXPECT_EQ(volumes.at(3), 6);
+        const auto boundaries = CountBoundaryAttributes(*mesh);
+        EXPECT_EQ(boundaries.at(1), 6);
+        EXPECT_EQ(boundaries.contains(2), external);
+        if (external) EXPECT_EQ(boundaries.at(2), 6);
+
+        cfg->mutate([](stroid::config::MeshConfig& value) { value.core_mapping = "spherified"; });
+        auto legacy = stroid::topology::BuildSkeleton(*cfg);
+        EXPECT_EQ(legacy->GetNE(), external ? 13 : 7);
+        EXPECT_EQ(CountVolumeAttributes(*legacy).at(1), 1);
+    }
+}
+
+TEST_F(stroidTest, MultiBlockCore_RejectsUnknownMappingAndInvalidGeometryConfiguration) {
+    auto cfg = MultiBlockConfiguration(2, 0, true);
+    cfg->mutate([](stroid::config::MeshConfig& value) { value.core_mapping = "not_a_core_mapping"; });
+    EXPECT_THROW(stroid::topology::BuildSkeleton(*cfg), std::invalid_argument);
+    cfg = MultiBlockConfiguration(2, 0, true);
+    cfg->mutate([](stroid::config::MeshConfig& value) { value.r_core = value.r_star; });
+    EXPECT_THROW(stroid::topology::BuildSkeleton(*cfg), std::invalid_argument);
+    cfg = MultiBlockConfiguration(2, 0, true);
+    cfg->mutate([](stroid::config::MeshConfig& value) { value.r_infinity = value.r_star; });
+    EXPECT_THROW(stroid::topology::BuildSkeleton(*cfg), std::invalid_argument);
+    cfg = MultiBlockConfiguration(2, 0, true);
+    cfg->mutate([](stroid::config::MeshConfig& value) { value.flattening = 1.0; });
+    EXPECT_THROW(stroid::topology::BuildSkeleton(*cfg), std::invalid_argument);
+}
+
+TEST_F(stroidTest, MultiBlockCore_MapHasAffineInnerCubeAndContinuousSphericalInterface) {
+    auto cfg = MultiBlockConfiguration(4, 0, true);
+    const double radius = (*cfg)->r_core.value();
+    for (int axis = 0; axis < 3; ++axis) {
+        for (double sign : {-1.0, 1.0}) {
+            for (double a : {-1.0, -0.4, 0.0, 0.6, 1.0}) {
+                for (double b : {-1.0, -0.3, 0.0, 0.7, 1.0}) {
+                    mfem::Vector direction(3);
+                    direction(axis) = sign;
+                    direction((axis + 1) % 3) = a;
+                    direction((axis + 2) % 3) = b;
+                    mfem::Vector inner(direction);
+                    inner *= radius / 2.0;
+                    mfem::Vector expected(inner);
+                    expected /= std::sqrt(3.0);
+                    mfem::Vector mapped = TransformCopy(inner, *cfg, 1);
+                    mapped -= expected;
+                    EXPECT_LT(mapped.Norml2(), 2.0e-14);
+                    for (double interfaceRadius : {radius / 2.0, radius}) {
+                        mfem::Vector inside(direction), outside(direction);
+                        inside *= interfaceRadius * (1.0 - 1.0e-8);
+                        outside *= interfaceRadius * (1.0 + 1.0e-8);
+                        mapped = TransformCopy(inside, *cfg, 1);
+                        mapped -= TransformCopy(outside, *cfg, interfaceRadius == radius ? 2 : 1);
+                        EXPECT_LT(mapped.Norml2(), 1.0e-7 * radius);
+                    }
+                    mfem::Vector coreInterface(direction);
+                    coreInterface *= radius;
+                    EXPECT_NEAR(TransformCopy(coreInterface, *cfg, 1).Norml2(), radius, 2.0e-14);
+                }
+            }
+        }
+    }
+    auto mesh = stroid::GenerateMesh(*cfg);
+    ASSERT_NE(mesh.mesh, nullptr);
+    ExpectCoreFaceContinuity(*mesh.mesh, 1);
+}
+
+TEST_F(stroidTest, MultiBlockCore_ClosedGridSignedJacobiansAndSvdAcrossOrdersAndRefinements) {
+    for (int order = 1; order <= 6; ++order) {
+        for (int refinement = 0; refinement <= 2; ++refinement) {
+            SCOPED_TRACE("order=" + std::to_string(order) + " refinement=" + std::to_string(refinement));
+            auto cfg = MultiBlockConfiguration(order, refinement, false);
+            auto mesh = stroid::GenerateMesh(*cfg);
+            ASSERT_NE(mesh.mesh, nullptr);
+            const int factor = 1 << (3 * refinement);
+            EXPECT_EQ(mesh.mesh->GetNE(), 13 * factor);
+            EXPECT_EQ(CountVolumeAttributes(*mesh.mesh).at(1), 7 * factor);
+            ExpectClosedGridCoreConditioning(*mesh.mesh, 1);
+        }
+    }
+}
+
+TEST_F(stroidTest, MultiBlockCore_MapIsScaleInvariantBelowLegacyRadiusCutoff) {
+    constexpr double scale = 1.0e-15;
+    auto reference = MultiBlockConfiguration(2, 0, true);
+    reference->mutate([](stroid::config::MeshConfig& value) { value.r_infinity = 5.0; });
+    auto scaled = MultiBlockConfiguration(2, 0, true);
+    scaled->mutate([](stroid::config::MeshConfig& value) {
+        value.r_core = 2.5e-16;
+        value.r_star = 1.0e-15;
+        value.r_infinity = 5.0e-15;
+    });
+    const std::array<std::array<double, 3>, 10> points{{
+        {{0.0, 0.0, 0.0}},
+        {{0.05, -0.04, 0.1}},
+        {{0.125, 0.08, -0.02}},
+        {{0.18, -0.09, 0.12}},
+        {{-0.2, -0.2, -0.2}},
+        {{0.25, 0.12, -0.2}},
+        {{0.6, -0.2, 0.4}},
+        {{1.0, 0.7, -0.3}},
+        {{3.0, -1.3, 0.4}},
+        {{-5.0, 2.1, -1.0}}
+    }};
+    for (const auto& coordinates : points) {
+        mfem::Vector point(3);
+        for (int component = 0; component < 3; ++component) point(component) = coordinates[component];
+        const double logicalRadius = std::max({std::abs(point(0)), std::abs(point(1)), std::abs(point(2))});
+        const int attribute = logicalRadius <= 0.25 ? 1 : logicalRadius <= 1.0 ? 2 : 3;
+        const auto expected = TransformCopy(point, *reference, attribute);
+        point *= scale;
+        auto actual = TransformCopy(point, *scaled, attribute);
+        actual /= scale;
+        for (int component = 0; component < 3; ++component) {
+            EXPECT_NEAR(actual(component), expected(component), 2.0e-13)
+                << "logical radius=" << logicalRadius << " component=" << component;
+        }
+    }
+}
+
+TEST_F(stroidTest, MultiBlockCore_FlatteningCustomIdsAndExteriorCoordinateRemainConsistent) {
+    auto cfg = MultiBlockConfiguration(3, 1, true, 0.2);
+    cfg->mutate([](stroid::config::MeshConfig& value) {
+        value.core_id = 11;
+        value.envelope_id = 17;
+        value.vacuum_id = 23;
+        value.surface_bdr_id = 31;
+        value.inf_bdr_id = 37;
+    });
+    auto mesh = stroid::GenerateMesh(*cfg);
+    ASSERT_NE(mesh.mesh, nullptr);
+    const auto volume = CountVolumeAttributes(*mesh.mesh);
+    EXPECT_EQ(volume.at(11), 7 * 8);
+    EXPECT_EQ(volume.at(17), 6 * 8);
+    EXPECT_EQ(volume.at(23), 6 * 8);
+    const auto boundary = CountBoundaryAttributes(*mesh.mesh);
+    EXPECT_EQ(boundary.at(31), 6 * 4);
+    EXPECT_EQ(boundary.at(37), 6 * 4);
+    ExpectClosedGridCoreConditioning(*mesh.mesh, 11);
+    ExpectCoreFaceContinuity(*mesh.mesh, 11);
+    ExpectExteriorCoordinateRange(mesh);
+    ExpectExteriorCoordinateBoundaryTraces(mesh);
+    mfem::Vector point(3);
+    point(0) = 0.25;
+    point(1) = 0.25;
+    point(2) = 0.25;
+    auto mapped = TransformCopy(point, *cfg, 11);
+    mapped(2) /= 0.8;
+    EXPECT_NEAR(mapped.Norml2(), 0.25, 2.0e-14);
+}
+
+TEST_F(stroidTest, MultiBlockCore_OuterMappingAndSignedStellarVolumeMatchLegacy) {
+    auto cfg = MultiBlockConfiguration(3, 1, true);
+    auto legacyCfg = MultiBlockConfiguration(3, 1, true);
+    legacyCfg->mutate([](stroid::config::MeshConfig& value) { value.core_mapping = "spherified"; });
+    const double coreRadius = (*cfg)->r_core.value();
+    const double stellarRadius = (*cfg)->r_star.value();
+    const double infinityRadius = (*cfg)->r_infinity.value();
+    for (int axis = 0; axis < 3; ++axis) {
+        for (double sign : {-1.0, 1.0}) {
+            for (double a : {-1.0, -0.3, 0.0, 0.8, 1.0}) {
+                for (double b : {-1.0, 0.0, 0.4, 1.0}) {
+                    mfem::Vector direction(3);
+                    direction(axis) = sign;
+                    direction((axis + 1) % 3) = a;
+                    direction((axis + 2) % 3) = b;
+                    for (double radius : {coreRadius, (coreRadius + stellarRadius) / 2.0, stellarRadius,
+                                          (stellarRadius + infinityRadius) / 2.0, infinityRadius}) {
+                        mfem::Vector point(direction);
+                        point *= radius;
+                        const int attribute = radius <= stellarRadius ? 2 : 3;
+                        auto difference = TransformCopy(point, *cfg, attribute);
+                        difference -= TransformCopy(point, *legacyCfg, attribute);
+                        EXPECT_LT(difference.Norml2(), 2.0e-14 * infinityRadius);
+                    }
+                }
+            }
+        }
+    }
+    auto mesh = stroid::GenerateMesh(*cfg);
+    auto legacy = stroid::GenerateMesh(*legacyCfg);
+    const auto signedStellarVolume = [](mfem::Mesh& candidate) {
+        double volume = 0.0;
+        for (int element = 0; element < candidate.GetNE(); ++element) {
+            if (candidate.GetAttribute(element) == 3) continue;
+            auto* transformation = candidate.GetElementTransformation(element);
+            const auto& rule = mfem::IntRules.Get(transformation->GetGeometryType(), 3 * transformation->Order() + 2);
+            for (int q = 0; q < rule.GetNPoints(); ++q) {
+                const auto& point = rule.IntPoint(q);
+                transformation->SetIntPoint(&point);
+                volume += point.weight * transformation->Jacobian().Det();
+            }
+        }
+        return volume;
+    };
+    const double newVolume = signedStellarVolume(*mesh.mesh);
+    const double oldVolume = signedStellarVolume(*legacy.mesh);
+    EXPECT_GT(newVolume, 0.0);
+    EXPECT_NEAR(newVolume, oldVolume, 2.0e-11 * oldVolume);
+}
+
+TEST_F(stroidTest, MultiBlockCore_SaveLoadConfigAndRefinementPreserveContracts) {
+    for (const bool external : {false, true}) {
+        SCOPED_TRACE(external);
+        auto cfg = MultiBlockConfiguration(3, 0, external);
+        auto original = stroid::GenerateMesh(*cfg);
+        EXPECT_EQ(original.type, stroid::MFEM_MESH_TYPE::SERIAL);
+        const auto path = std::filesystem::temp_directory_path() /
+            (external ? "stroid_multiblock_external_round_trip.smesh" : "stroid_multiblock_stellar_round_trip.smesh");
+        stroid::IO::SaveStroidMesh(original, path.string(), "Multi-block core regression");
+        auto result = stroid::IO::LoadStroidMesh(path.string());
+        ASSERT_TRUE(result.has_value()) << result.error();
+        auto loaded = std::move(*result);
+        EXPECT_EQ(loaded.type, stroid::MFEM_MESH_TYPE::SERIAL);
+        ASSERT_NE(loaded.mesh, nullptr);
+        ASSERT_NE(loaded.reference_mesh, nullptr);
+        EXPECT_EQ(loaded.config.core_mapping.value(), "multi_block");
+        EXPECT_EQ(loaded.config.include_external_domain.value(), external);
+        EXPECT_EQ(loaded.mesh->GetNE(), original.mesh->GetNE());
+        ASSERT_EQ(loaded.mesh->GetNodes()->Size(), original.mesh->GetNodes()->Size());
+        for (int dof = 0; dof < original.mesh->GetNodes()->Size(); ++dof) {
+            EXPECT_NEAR((*loaded.mesh->GetNodes())(dof), (*original.mesh->GetNodes())(dof), 2.0e-14);
+        }
+        stroid::refinement::UniformRefinement(loaded, 1);
+        EXPECT_EQ(loaded.refinement_levels, 1);
+        EXPECT_EQ(loaded.mesh->GetNE(), original.mesh->GetNE() * 8);
+        EXPECT_EQ(CountVolumeAttributes(*loaded.mesh).at(1), 7 * 8);
+        ExpectClosedGridCoreConditioning(*loaded.mesh, 1);
+        ExpectCoreFaceContinuity(*loaded.mesh, 1);
+        if (external) {
+            ExpectExteriorCoordinateRange(loaded);
+            ExpectExteriorCoordinateBoundaryTraces(loaded);
+        } else {
+            EXPECT_EQ(loaded.exterior_coordinate, nullptr);
+        }
+        std::error_code error;
+        std::filesystem::remove(path, error);
+        EXPECT_FALSE(error);
+    }
+
+    auto legacyCfg = MultiBlockConfiguration(2, 0, false);
+    legacyCfg->mutate([](stroid::config::MeshConfig& value) { value.core_mapping = "spherified"; });
+    auto legacy = stroid::GenerateMesh(*legacyCfg);
+    EXPECT_EQ(legacy.type, stroid::MFEM_MESH_TYPE::SERIAL);
+    const auto path = std::filesystem::temp_directory_path() / "stroid_core_mapping_legacy_round_trip.smesh";
+    stroid::IO::SaveStroidMesh(legacy, path.string(), "Legacy core mapping default regression");
+    std::ifstream input(path);
+    std::string contents((std::istreambuf_iterator<char>(input)), std::istreambuf_iterator<char>());
+    const auto marker = contents.find("\ncore_mapping:");
+    ASSERT_NE(marker, std::string::npos);
+    const auto fieldStart = marker + 1;
+    const auto newline = contents.find('\n', fieldStart);
+    ASSERT_NE(newline, std::string::npos);
+    contents.erase(fieldStart, newline - fieldStart + 1);
+    std::istringstream legacyStream(contents);
+    auto restored = stroid::IO::ParseStroidMesh(legacyStream);
+    ASSERT_TRUE(restored.has_value()) << restored.error();
+    EXPECT_EQ(restored->config.core_mapping.value(), "spherified");
+    EXPECT_EQ(CountVolumeAttributes(*restored->mesh).at(1), 1);
+    std::error_code error;
+    std::filesystem::remove(path, error);
+    EXPECT_FALSE(error);
+}

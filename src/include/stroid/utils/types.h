@@ -16,10 +16,16 @@ namespace stroid {
         PARALLEL
     };
 
+    struct ScalarMeshField {
+        std::unique_ptr<mfem::FiniteElementSpace> space;
+        std::unique_ptr<mfem::GridFunction> values;
+    };
+
     struct StroidMesh {
         MFEM_MESH_TYPE type;
         std::unique_ptr<mfem::Mesh> mesh;
         std::unique_ptr<mfem::Mesh> reference_mesh;
+        std::unique_ptr<ScalarMeshField> exterior_coordinate;
         config::MeshConfig config;
         size_t refinement_levels;
 
@@ -61,5 +67,17 @@ namespace stroid {
 
             return mesh_stats;
         }
+
+        std::unique_ptr<StroidMesh> clone() const {
+            std::unique_ptr<StroidMesh> new_mesh;
+            new_mesh->type = type;
+            new_mesh->mesh = std::make_unique<mfem::Mesh>(*mesh);
+            new_mesh->reference_mesh = std::make_unique<mfem::Mesh>(*reference_mesh);
+            new_mesh->config = config;
+            new_mesh->refinement_levels = refinement_levels;
+
+            return new_mesh;
+        }
+
     };
 }

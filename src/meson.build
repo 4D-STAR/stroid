@@ -41,7 +41,7 @@ if get_option('build_python')
     endif
 
     libstroid = static_library(
-        'libstroid',
+        'stroid',
         stroid_sources,
         include_directories: stroid_include_files,
         dependencies: dependencies,
@@ -52,11 +52,11 @@ if get_option('build_python')
     )
 else
     libstroid = static_library(
-        'libstroid',
+        'stroid',
         stroid_sources,
         include_directories: stroid_include_files,
         dependencies: dependencies,
-        install: true,
+        install: true
     )
 endif
 
@@ -81,7 +81,9 @@ endif
 
 meson.override_dependency('stroid', stroid_dep)
 
+message('stroid include dir: ' + stroid_includedir)
 install_subdir(
     'include/stroid',
-    install_dir: get_option('includedir') / 'stroid'
+    install_dir: stroid_includedir,
+    exclude_files: ['version.h.in']
 )

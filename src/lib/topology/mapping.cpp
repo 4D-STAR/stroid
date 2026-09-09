@@ -96,7 +96,14 @@ namespace stroid::topology {
         double Z = pos(2);
 
         double maxAbs = std::max({std::abs(X), std::abs(Y), std::abs(Z)});
-        if (maxAbs < 1e-14) return;
+        const bool multi_block = config->core_mapping.value_or("spherified") == "multi_block";
+        const double inner_radius = config->r_core.value() / 2.0;
+        if (multi_block && maxAbs <= inner_radius) {
+            pos /= std::sqrt(3.0);
+            ApplySpheroidal(pos, config);
+            return;
+        }
+        if (!multi_block && maxAbs < 1e-14) return;
 
         double cx = X / maxAbs;
         double cy = Y / maxAbs;
@@ -112,6 +119,15 @@ namespace stroid::topology {
         unit_dir(2) = sz;
 
         if (maxAbs <= config->r_core.value()) {
+            if (multi_block) {
+                const double t = (maxAbs - inner_radius) / inner_radius;
+                const double inner_scale = inner_radius / std::sqrt(3.0);
+                pos(0) = (1.0 - t) * inner_scale * cx + t * config->r_core.value() * sx;
+                pos(1) = (1.0 - t) * inner_scale * cy + t * config->r_core.value() * sy;
+                pos(2) = (1.0 - t) * inner_scale * cz + t * config->r_core.value() * sz;
+                ApplySpheroidal(pos, config);
+                return;
+            }
             double nx = X / config->r_core.value();
             double ny = Y / config->r_core.value();
             double nz = Z / config->r_core.value();
@@ -142,68 +158,31 @@ namespace stroid::topology {
         }
     }
 
-    // void TransformPoint(mfem::Vector &pos, const fourdst::config::Config<config::MeshConfig> &config, int attribute_id) {
-    //     double l_inf = 0.0;
-    //     for (int i = 0; i < pos.Size(); ++i) {
-    //         l_inf = std::max(l_inf, std::abs(pos(i)));
-    //     }
-    //
-    //     if (l_inf < config->r_instability) return;
-    //
-    //     // Gnomonic projection
-    //     const double r_log = pos.Norml2();
-    //     mfem::Vector unit_dir = pos;
-    //     unit_dir /= r_log;
-    //
-    //     ApplyEquiangular(unit_dir);
-    //     unit_dir /= unit_dir.Norml2(); // Re-normalize
-    //
-    //     if (l_inf <= config->r_core) {
-    //         const double t = l_inf / config->r_core.value();
-    //         double alpha = std::pow(t, config->core_steepness.value());
-    //         const size_t order = config->continuity_order.value_or(2);
-    //         if (order < 1 || order > MAX_SMOOTHSTEP_ORDER) {
-    //             const std::string err_msg = std::format("Invalid continuity order: {}. Continuity order must be between (inclusive) 1 and {}. To push to higher orders you must update MAX_SMOOTHSTEP_ORDER in src/lib/topology/mapping.cpp and recompile.", order, MAX_SMOOTHSTEP_ORDER);
-    //             throw exceptions::StroidContinuityError(err_msg);
-    //         }
-    //
-    //         alpha = smoothstep_dispatch[order - 1](alpha); // We use this funky method as it keeps smoothstep calculation largely offloaded to compile time rather than run-time
-    //
-    //         mfem::Vector pos_cartesian = pos;
-    //         mfem::Vector pos_spherical = unit_dir;
-    //
-    //         pos_spherical *= l_inf;
-    //         bool run_smoothstep = false;
-    //
-    //
-    //         if (config->optimization_methods.has_value() && config->optimization_methods.value().smoothstep.has_value() && config->optimization_methods.value().smoothstep.value()) {
-    //             run_smoothstep = true;
-    //         }
-    //
-    //
-    //         if (run_smoothstep) {
-    //             for (int d = 0; d < pos.Size(); ++d) {
-    //                 pos(d) = (1.0 - alpha) * pos_cartesian(d) + alpha * pos_spherical(d);
-    //             }
-    //         }
-    //
-    //         ApplySpheroidal(pos, config);
-    //         return;
-    //     }
-    //
-    //     if (l_inf <= config->r_star) {
-    //         const double xi = (l_inf - config->r_core.value()) / (config->r_star.value() - config->r_core.value());
-    //         const double r_phys = config->r_core.value() + xi * (config->r_star.value() - config->r_core.value());
-    //
-    //         pos = unit_dir;
-    //         pos *= r_phys;
-    //
-    //         ApplySpheroidal(pos, config);
-    //     } else {
-    //         pos = unit_dir;
-    //         pos *= l_inf;
-    //
-    //         ApplySpheroidal(pos, config);
-    //     }
-    // }
+    double ComputeExteriorCoordinate(
+        const mfem::Vector& logical_position,
+        const int attribute,
+        const fourdst::config::Config<config::MeshConfig>& config
+    ) {
+        if (!config->include_external_domain.value() || attribute != static_cast<int>(config->vacuum_id.value())) return 0.0;
+
+        const double logical_radius = std::max({
+            std::abs(logical_position(0)),
+            std::abs(logical_position(1)),
+            std::abs(logical_position(2))
+        });
+
+        const double r_star = config->r_star.value();
+        const double r_infinity = config->r_infinity.value();
+        const double coordinate = (logical_radius - r_star) / (r_infinity - r_star);
+        constexpr double tolerance = 64.0 * std::numeric_limits<double>::epsilon();
+
+        if (coordinate < -tolerance || coordinate > 1.0 + tolerance) {
+            throw std::runtime_error("Logical exterior coordinate lies outside [0, 1].");
+        }
+
+        if (std::abs(coordinate) <= tolerance) return 0.0;
+        if (std::abs(coordinate - 1.0) <= tolerance) return 1.0;
+        return coordinate;
+    }
+
 }

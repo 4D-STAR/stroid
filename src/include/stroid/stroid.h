@@ -51,6 +51,7 @@
 namespace stroid {
     inline StroidMesh GenerateMesh(const fourdst::config::Config<stroid::config::MeshConfig>& cfg) {
         StroidMesh sm;
+        sm.type = MFEM_MESH_TYPE::SERIAL;
         sm.config = *cfg;
         auto reference = stroid::topology::BuildSkeleton(cfg);
         stroid::topology::Finalize(*reference, cfg);
@@ -61,6 +62,7 @@ namespace stroid {
         if (cfg->optimization_methods.has_value() && cfg->optimization_methods.value().tmop.has_value() && cfg->optimization_methods.value().tmop.value()) {
             stroid::topology::ApplyTMOP(*sm.mesh, cfg);
         }
+        sm.exterior_coordinate = stroid::topology::BuildExteriorCoordinate(*sm.mesh, *sm.reference_mesh, cfg);
         return sm;
     }
     inline StroidMesh GenerateMesh(const stroid::config::MeshConfig& config) {

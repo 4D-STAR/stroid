@@ -4,6 +4,7 @@
 #include "stroid/utils/types.h"
 #include "stroid/utils/mesh_utils.h"
 #include "stroid/exceptions/exceptions.h"
+#include "stroid/topology/curvilinear.h"
 #include "stroid/topology/topology.h"
 #include "stroid/topology/optimize.h"
 
@@ -17,6 +18,10 @@ namespace stroid::refinement {
             return;
         }
 
+        if (!mesh.mesh) {
+            throw exceptions::StroidMissingReferenceMesh("UniformRefinement requires a primary mesh to be present in the StroidMesh object. This should be present by construction and the fact that it is missing represents a bug. Please report this to the stroid developers on GitHub or by email at emily.boudreaux@dartmouth.edu");
+        }
+        mesh.exterior_coordinate.reset();
         for (size_t i = 0; i < levels; i++) {
             mesh.reference_mesh->UniformRefinement();
         }
@@ -31,9 +36,7 @@ namespace stroid::refinement {
         cfg.mutate(Mutator);
 
         mesh.mesh = utils::BuildProjected(*mesh.reference_mesh, cfg);
-
-
-
         topology::OptimizeMesh(*mesh.mesh, cfg);
+        mesh.exterior_coordinate = topology::BuildExteriorCoordinate(*mesh.mesh, *mesh.reference_mesh, cfg);
     }
 }

@@ -1,4 +1,4 @@
-project('stroid', 'cpp', meson_version : '>= 1.3.0', version : 'v0.4.0', default_options : ['cpp_std=c++23'])
+project('stroid', 'cpp', meson_version : '>= 1.3.0', version : 'v0.5.0', default_options : ['cpp_std=c++23'])
 
 subdir('build-check')
 
@@ -28,6 +28,7 @@ if get_option('pkg_config')
         ],
         subdirs: ['stroid'],
         filebase: 'stroid',
-        install_dir: join_paths(get_option('libdir'), 'pkgconfig')
+        install_dir: join_paths(get_option('libdir'), 'pkgconfig'),
+        requires: ['fourdst_config']
     )
 endif

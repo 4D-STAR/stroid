@@ -3,6 +3,7 @@
 #include "mfem.hpp"
 #include "stroid/config/config.h"
 #include "fourdst/config/config.h"
+#include "stroid/utils/types.h"
 
 namespace stroid::topology {
     /**
@@ -18,4 +19,17 @@ namespace stroid::topology {
      * @param config Mesh configuration (uses radii, flattening, and mapping parameters).
      */
     void ProjectMesh(mfem::Mesh& mesh, const fourdst::config::Config<config::MeshConfig> &config);
+
+    /**
+     * @brief Build a scalar grid function representing the compactification coordinate for a mesh. This ranges from 0-1 with 0 at the stellar surface and 1 at the compactified infinity.
+     * @param mesh Reference to the underlying serial MFEM mesh which has been promoted to high-order and projected into the curvilinear domain.
+     * @param reference_mesh reference to the underlying serial which has not been promoted to high-order or projected into the curvilinear domain. This is used to compute the compactification coordinate.
+     * @param config Config file
+     * @return Unique pointer to a scalar mesh field representing the compactification coordinate.
+     */
+    std::unique_ptr<ScalarMeshField> BuildExteriorCoordinate(
+        mfem::Mesh& mesh,
+        mfem::Mesh& reference_mesh,
+        const fourdst::config::Config<config::MeshConfig>& config
+    );
 }

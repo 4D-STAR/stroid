@@ -80,14 +80,10 @@ for PY_VERSION in "${PYTHON_VERSIONS[@]}"; do
 
     echo "➤ Repairing wheel with delocate"
     if [[ -n "${FOURDST_PIN}" ]]; then
-      FOURDST_LIB_PATH="$("$PY" -c 'import fourdst, os; print(os.pathsep.join(fourdst.get_lib_dirs()))')"
-      DELOCATE_DYLD_PATH="${FOURDST_LIB_PATH}:${DELOCATE_DYLD_PATH}"
-      DYLD_LIBRARY_PATH="${DELOCATE_DYLD_PATH}" \
         delocate-wheel --require-archs arm64 \
           -e composition -e logging -e const -e reflect_cpp \
           -w "${FINAL_WHEEL_DIR}" -v "$CURRENT_WHEEL"
     else
-      DYLD_LIBRARY_PATH="${DELOCATE_DYLD_PATH}" \
         delocate-wheel --require-archs arm64 \
           -w "${FINAL_WHEEL_DIR}" -v "$CURRENT_WHEEL"
     fi
@@ -109,4 +105,4 @@ done
 rm -rf "${TMPDIR}"
 rm -rf "${WHEEL_DIR}"
 
-echo "✅ All builds complete. Artifacts in ${FINAL_WHEEL_DIR}"
+echo "All builds complete. Artifacts in ${FINAL_WHEEL_DIR}"

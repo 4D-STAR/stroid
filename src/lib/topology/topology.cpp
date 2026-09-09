@@ -1,6 +1,8 @@
 #include "mfem.hpp"
 #include <vector>
 #include <memory>
+#include <cmath>
+#include <stdexcept>
 
 #include "stroid/config/config.h"
 #include "fourdst/config/config.h"
@@ -8,9 +10,31 @@
 namespace stroid::topology {
 
     std::unique_ptr<mfem::Mesh> BuildSkeleton(const fourdst::config::Config<config::MeshConfig> & config) {
-        int nVert = config->include_external_domain ? 24 : 16;
-        int nElem = config->include_external_domain ? 13 : 7;
-        int nBev  = config->include_external_domain ? 12 : 6;
+        const std::string core_mapping = config->core_mapping.value_or("spherified");
+        if (core_mapping != "spherified" && core_mapping != "multi_block") {
+            throw std::invalid_argument("Unknown core_mapping: " + core_mapping);
+        }
+
+        const bool multi_block = core_mapping == "multi_block";
+        const bool include_external_domain = config->include_external_domain.value_or(true);
+        if (multi_block) {
+            const double r_core = config->r_core.value();
+            const double r_star = config->r_star.value();
+            const double r_infinity = config->r_infinity.value_or(6.0);
+            const double flattening = config->flattening.value();
+            if (!std::isfinite(r_core) || !std::isfinite(r_star) || r_core <= 0.0 || r_star <= r_core ||
+                (include_external_domain && (!std::isfinite(r_infinity) || r_infinity <= r_star))) {
+                throw std::invalid_argument("multi_block requires 0 < r_core < r_star < r_infinity (when external).");
+            }
+            if (!std::isfinite(flattening) || flattening >= 1.0) {
+                throw std::invalid_argument("multi_block requires finite flattening < 1.");
+            }
+        }
+
+        const int offset = multi_block ? 8 : 0;
+        int nVert = (include_external_domain ? 24 : 16) + offset;
+        int nElem = (include_external_domain ? 13 : 7) + (multi_block ? 6 : 0);
+        int nBev  = include_external_domain ? 12 : 6;
 
         auto mesh = std::make_unique<mfem::Mesh>(3, nVert, nElem, nBev, 3);
 
@@ -21,9 +45,12 @@ namespace stroid::topology {
                         mesh->AddVertex(x, y, z);
         };
 
+        if (multi_block) {
+            add_box(config->r_core.value() / 2.0);
+        }
         add_box(config->r_core.value());
         add_box(config->r_star.value());
-        if (config->include_external_domain) {
+        if (include_external_domain) {
             add_box(config->r_infinity.value());
         }
 
@@ -38,11 +65,18 @@ namespace stroid::topology {
             {1, 3, 7, 5, 9, 11, 15, 13},  // +X face
             {0, 4, 6, 2, 8, 12, 14, 10}   // -X face
         };
+        if (multi_block) {
+            for (const auto & shell : stellar_shells) {
+                mesh->AddHex(shell.data(), config->core_id.value());
+            }
+        }
         for (const auto & shell : stellar_shells) {
-            mesh->AddHex(shell.data(), config->envelope_id.value());
+            auto vertices = shell;
+            for (auto & vertex : vertices) vertex += offset;
+            mesh->AddHex(vertices.data(), config->envelope_id.value());
         }
 
-        if (config->include_external_domain) {
+        if (include_external_domain) {
             std::vector<std::array<int, 8>> vacuum_shells;
             vacuum_shells.push_back({8, 9, 13, 12, 16, 17, 21, 20});
             vacuum_shells.push_back({9, 11, 15, 13, 17, 19, 23, 21});
@@ -51,7 +85,9 @@ namespace stroid::topology {
             vacuum_shells.push_back({12, 13, 15, 14, 20, 21, 23, 22});
             vacuum_shells.push_back({10, 11, 9, 8, 18, 19, 17, 16});
             for (const auto & shell : vacuum_shells) {
-                mesh->AddHex(shell.data(), config->vacuum_id.value());
+                auto vertices = shell;
+                for (auto & vertex : vertices) vertex += offset;
+                mesh->AddHex(vertices.data(), config->vacuum_id.value());
             }
         }
 
@@ -66,10 +102,12 @@ namespace stroid::topology {
         };
 
         for (const auto& bdr: surface_bdr_quads) {
-            mesh->AddBdrQuad(bdr, config->surface_bdr_id.value());
+            int vertices[4];
+            for (int i = 0; i < 4; ++i) vertices[i] = bdr[i] + offset;
+            mesh->AddBdrQuad(vertices, config->surface_bdr_id.value());
         }
 
-        if (config->include_external_domain) {
+        if (include_external_domain) {
             const int inf_bdr_quads[6][4] = {
                 {16, 17, 21, 20},
                 {17, 19, 23, 21},
@@ -80,13 +118,16 @@ namespace stroid::topology {
             };
 
             for (const auto& bdr: inf_bdr_quads) {
-                mesh->AddBdrQuad(bdr, config->inf_bdr_id.value());
+                int vertices[4];
+                for (int i = 0; i < 4; ++i) vertices[i] = bdr[i] + offset;
+                mesh->AddBdrQuad(vertices, config->inf_bdr_id.value());
             }
         }
 
         return mesh;
     }
 
+    // ReSharper disable once CppUseInternalLinkage
     void Finalize(mfem::Mesh& mesh, const fourdst::config::Config<config::MeshConfig> &config) {
         mesh.FinalizeTopology();
         mesh.Finalize();
