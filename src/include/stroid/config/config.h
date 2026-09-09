@@ -3,6 +3,8 @@
 #include <cstdint>
 #include <optional>
 #include <string>
+#include <format>
+#include <sstream>
 
 namespace stroid::config {
 
@@ -122,5 +124,60 @@ namespace stroid::config {
 
         std::optional<OptimizationMethods> optimization_methods = OptimizationMethods{true, true};
 
+        /**
+         * @brief Core mapping strategy: legacy "spherified" or conditioned "multi_block".
+         *
+         * spherified generates a either two or three inscribed cubes then projects them into spheres.
+         * multi_block generates a multi-block topology with a single core block and six envelope blocks, then projects the core block into a sphere and the envelope blocks into a spheroid.
+         *
+         * multi_block is strongly preferred for its ~1000x improved condition number, Spherified is only provided for legacy compatibility.
+         *
+         * @section toml
+         * - [main].core_mapping
+         */
+        std::optional<std::string> core_mapping = "multi_block";
+
     };
+
+    inline std::string to_string(const MeshConfig &mesh_config) {
+        auto opt_2_string = [](const OptimizationMethods& opt) {
+            std::stringstream ss;
+            ss << "<OptimizationMethods:";
+            if (*opt.tmop) {
+                ss << " tmop";
+            }
+            if (*opt.smoothstep) {
+                ss << " smoothstep";
+            }
+            ss << ">";
+            return ss.str();
+        };
+
+        std::stringstream ss;
+
+        OptimizationMethods opt = mesh_config.optimization_methods.value_or(OptimizationMethods{false, true});
+        std::string opt_string = opt_2_string(opt);
+
+        ss << "MeshConfig:\n";
+        ss << std::format("  refinement_levels: {}\n", mesh_config.refinement_levels.value_or(4));
+        ss << std::format("  order: {}\n", mesh_config.order.value_or(3));
+        ss << std::format("  include_external_domain: {}\n", mesh_config.include_external_domain.value_or(true));
+        ss << std::format("  r_core: {}\n", mesh_config.r_core.value_or(0.25));
+        ss << std::format("  r_star: {}\n", mesh_config.r_star.value_or(1.0));
+        ss << std::format("  flattening: {}\n", mesh_config.flattening.value_or(0.0));
+        ss << std::format("  r_infinity: {}\n", mesh_config.r_infinity.value_or(6.0));
+        ss << std::format("  r_instability: {}\n", mesh_config.r_instability.value_or(1e-14));
+        ss << std::format("  core_steepness: {}\n", mesh_config.core_steepness.value_or(1.0));
+        ss << std::format("  continuity_order: {}\n", mesh_config.continuity_order.value_or(2));
+        ss << std::format("  surface_bdr_id: {}\n", mesh_config.surface_bdr_id.value_or(1));
+        ss << std::format("  inf_bdr_id: {}\n", mesh_config.inf_bdr_id.value_or(2));
+        ss << std::format("  core_id: {}\n", mesh_config.core_id.value_or(1));
+        ss << std::format("  envelope_id: {}\n", mesh_config.envelope_id.value_or(2));
+        ss << std::format("  vacuum_id: {}\n", mesh_config.vacuum_id.value_or(3));
+        ss << std::format("  optimization_methods: {}\n", opt_string);
+        ss << std::format("  core_mapping: {}\n", mesh_config.core_mapping.value_or("spherified"));
+
+        return ss.str();
+
+    }
 }

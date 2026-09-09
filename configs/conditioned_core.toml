@@ -1,0 +1,21 @@
+[main]
+core_mapping = "multi_block"
+refinement_levels = 2
+order = 3
+include_external_domain = true
+r_core = 0.25
+r_star = 1.0
+r_infinity = 6.0
+flattening = 0.0
+r_instability = 1e-14
+core_steepness = 1.0
+continuity_order = 2
+surface_bdr_id = 1
+inf_bdr_id = 2
+core_id = 1
+envelope_id = 2
+vacuum_id = 3
+
+[main.optimization_methods]
+tmop = false
+smoothstep = true

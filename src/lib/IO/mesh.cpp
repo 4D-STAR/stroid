@@ -1,12 +1,16 @@
 #include "mfem.hpp"
 #include "stroid/config/config.h"
 #include "stroid/IO/mesh.h"
+#include "stroid/topology/curvilinear.h"
 
+#include <algorithm>
 #include <charconv>
+#include <cmath>
 
 #include "stroid/version.h"
 
 #include <fstream>
+#include <iomanip>
 #include <iostream>
 #include <cstdint>
 #include <format>
@@ -17,6 +21,7 @@
 #include <stdexcept>
 #include <concepts>
 #include <limits>
+#include <vector>
 
 namespace stroid::IO {
 
@@ -34,6 +39,7 @@ namespace stroid::IO {
 #           - Type                : Serial or Parallel (S for Serial, P for Parallel)
 #           - mesh                : the primary computational domain which can be of n order and be h-refined
 #           - reference mesh      : a reference, linear order mesh, used to ensure that the primary mesh remains well formed
+#           - exterior coordinate : a scalar material coordinate which is zero at the stellar surface and one at infinity
 #           - config              : The configuration options initially used to generate the mesh
 #           - refinement-levels   : the total number of refinement levels the primary mesh has been subjected too
 # NOTE: EACH BLOCK OF DATA IS STORED BETWEEN "BEGIN BLOCK <NAME>\n ... \nEND BLOCK <NAME>
@@ -58,7 +64,7 @@ END BLOCK HEADER)",
 
         std::string format_primary_mesh(const StroidMesh& mesh) {
             std::stringstream ss;
-            ss.precision(8);
+            ss.precision(std::numeric_limits<double>::max_digits10);
             mesh.mesh->Print(ss);
 
             std::string pmesh = std::format("BEGIN BLOCK PMESH\n{}END BLOCK PMESH", ss.str());
@@ -77,7 +83,7 @@ END BLOCK HEADER)",
 
         std::string format_reference_mesh(const StroidMesh& mesh) {
             std::stringstream ss;
-            ss.precision(8);
+            ss.precision(std::numeric_limits<double>::max_digits10);
             mesh.reference_mesh->Print(ss);
 
             std::string rmesh = std::format("BEGIN BLOCK RMESH\n{}END BLOCK RMESH", ss.str());
@@ -170,6 +176,11 @@ vacuum_id:{}
 # includes tmop and smoothstep booleans
 optimization_methods-tmop:{}
 optimization_methods-smoothstep:{}
+
+# core_mapping: Core mapping strategy, either spherified or multi_block
+# std::optional<std::string>
+# default: spherified
+core_mapping:{}
 END BLOCK CONFIG)",
             format_opt(mesh.config.refinement_levels, d.refinement_levels.value()),
             format_opt(mesh.config.order, d.order.value()),
@@ -187,9 +198,52 @@ END BLOCK CONFIG)",
             format_opt(mesh.config.envelope_id, d.envelope_id.value()),
             format_opt(mesh.config.vacuum_id, d.vacuum_id.value()),
             m_opt.tmop.value_or(false),
-            m_opt.smoothstep.value_or(true));
+            m_opt.smoothstep.value_or(true),
+            format_opt(mesh.config.core_mapping, d.core_mapping.value()));
 
             return config_str;
+        }
+
+        std::string format_exterior_coordinate(const StroidMesh& mesh) {
+            const bool include_external_domain = mesh.config.include_external_domain.value_or(true);
+
+            if (!include_external_domain) {
+                if (mesh.exterior_coordinate) throw std::runtime_error("A mesh without an external domain cannot contain an exterior-coordinate field.");
+                return "BEGIN BLOCK EXTERIOR_COORDINATE\nPRESENT:false\nEND BLOCK EXTERIOR_COORDINATE";
+            }
+
+            if (!mesh.exterior_coordinate || !mesh.exterior_coordinate->space || !mesh.exterior_coordinate->values) {
+                throw std::runtime_error("A mesh with an external domain must contain a complete exterior-coordinate field before it can be saved.");
+            }
+            if (mesh.exterior_coordinate->space->GetMesh() != mesh.mesh.get()) {
+                throw std::runtime_error("The exterior-coordinate finite-element space is attached to the wrong mesh.");
+            }
+            if (mesh.exterior_coordinate->values->FESpace() != mesh.exterior_coordinate->space.get()) {
+                throw std::runtime_error("The exterior-coordinate grid function is attached to the wrong finite-element space.");
+            }
+
+            const int scalar_dofs = mesh.exterior_coordinate->space->GetNDofs();
+            if (mesh.exterior_coordinate->values->Size() != scalar_dofs) {
+                throw std::runtime_error("The exterior-coordinate grid function has an invalid size.");
+            }
+
+            std::stringstream ss;
+            ss << std::setprecision(std::numeric_limits<double>::max_digits10);
+            ss << "BEGIN BLOCK EXTERIOR_COORDINATE\n";
+            ss << "PRESENT:true\n";
+            ss << "NDOFS:" << scalar_dofs << '\n';
+            ss << "VALUES:\n";
+
+            for (int dof = 0; dof < scalar_dofs; ++dof) {
+                const double coordinate = (*mesh.exterior_coordinate->values)(dof);
+                if (!std::isfinite(coordinate) || coordinate < 0.0 || coordinate > 1.0) {
+                    throw std::runtime_error(std::format("Exterior-coordinate DOF {} has invalid value {}.", dof, coordinate));
+                }
+                ss << coordinate << '\n';
+            }
+
+            ss << "END BLOCK EXTERIOR_COORDINATE";
+            return ss.str();
         }
     }
 
@@ -350,6 +404,7 @@ END BLOCK CONFIG)",
             auto as_size   = [](std::optional<size_t>* f) { return [f](const std::string_view v) -> std::expected<void, std::string> { auto r = parse_int<size_t>(v); if (!r) return std::unexpected(r.error()); *f = *r; return {}; }; };
             auto as_double = [](std::optional<double>* f) { return [f](const std::string_view v) -> std::expected<void, std::string> { auto r = parse_double(v);     if (!r) return std::unexpected(r.error()); *f = *r; return {}; }; };
             auto as_bool   = [](std::optional<bool>* f)   { return [f](const std::string_view v) -> std::expected<void, std::string> { auto r = parse_bool(v);       if (!r) return std::unexpected(r.error()); *f = *r; return {}; }; };
+            auto as_string = [](std::optional<std::string>* f) { return [f](const std::string_view v) -> std::expected<void, std::string> { *f = std::string(v); return {}; }; };
 
             const std::unordered_map<std::string_view, Handler> handlers = {
                 {"refinement_levels",               as_int(&cfg.refinement_levels)},
@@ -369,6 +424,7 @@ END BLOCK CONFIG)",
                 {"vacuum_id",                       as_size(&cfg.vacuum_id)},
                 {"optimization_methods-tmop",       as_bool(&opt.tmop)},
                 {"optimization_methods-smoothstep", as_bool(&opt.smoothstep)},
+                {"core_mapping",                    as_string(&cfg.core_mapping)},
             };
 
             std::istringstream iss(content);
@@ -407,7 +463,121 @@ END BLOCK CONFIG)",
             StroidMesh  mesh;
             std::string pmesh_raw;
             std::string rmesh_raw;
+            std::optional<std::string> exterior_coordinate_raw;
         };
+
+        struct ParsedExteriorCoordinate {
+            bool present{false};
+            int scalar_dofs{0};
+            std::vector<double> values;
+        };
+
+        std::expected<ParsedExteriorCoordinate, std::string> parse_exterior_coordinate(const std::string& content) {
+            ParsedExteriorCoordinate parsed;
+            std::optional<bool> present;
+            std::optional<int> scalar_dofs;
+            bool reading_values = false;
+            std::istringstream iss(content);
+            std::string line;
+
+            while (std::getline(iss, line)) {
+                const std::string_view value = trim(line);
+                if (value.empty() || value.starts_with('#')) continue;
+
+                if (reading_values) {
+                    auto coordinate = parse_double(value);
+                    if (!coordinate) return std::unexpected("EXTERIOR_COORDINATE value -> " + coordinate.error());
+                    parsed.values.push_back(*coordinate);
+                    continue;
+                }
+
+                const auto colon = value.find(':');
+                if (colon == std::string_view::npos) return std::unexpected(std::format("invalid EXTERIOR_COORDINATE line '{}'.", value));
+
+                const std::string_view key = trim(value.substr(0, colon));
+                const std::string_view field_value = trim(value.substr(colon + 1));
+
+                if (key == "PRESENT") {
+                    auto result = parse_bool(field_value);
+                    if (!result) return std::unexpected("EXTERIOR_COORDINATE PRESENT -> " + result.error());
+                    present = *result;
+                } else if (key == "NDOFS") {
+                    auto result = parse_int<int>(field_value);
+                    if (!result) return std::unexpected("EXTERIOR_COORDINATE NDOFS -> " + result.error());
+                    scalar_dofs = *result;
+                } else if (key == "VALUES") {
+                    if (!field_value.empty()) return std::unexpected("EXTERIOR_COORDINATE VALUES must not contain an inline value.");
+                    reading_values = true;
+                } else {
+                    return std::unexpected(std::format("unknown EXTERIOR_COORDINATE key '{}'.", key));
+                }
+            }
+
+            if (!present.has_value()) return std::unexpected("EXTERIOR_COORDINATE block is missing PRESENT.");
+            parsed.present = *present;
+
+            if (!parsed.present) {
+                if (scalar_dofs.has_value() || !parsed.values.empty()) return std::unexpected("An absent exterior coordinate cannot contain NDOFS or VALUES.");
+                return parsed;
+            }
+
+            if (!scalar_dofs.has_value() || *scalar_dofs < 0) return std::unexpected("EXTERIOR_COORDINATE block has an invalid or missing NDOFS.");
+            if (static_cast<int>(parsed.values.size()) != *scalar_dofs) {
+                return std::unexpected(std::format("EXTERIOR_COORDINATE expected {} values but found {}.", *scalar_dofs, parsed.values.size()));
+            }
+
+            parsed.scalar_dofs = *scalar_dofs;
+            return parsed;
+        }
+
+        std::expected<void, std::string> restore_exterior_coordinate(StroidMesh& mesh, const std::optional<std::string>& raw) {
+            fourdst::config::Config<config::MeshConfig> config;
+            config.mutate([&mesh](config::MeshConfig& value) { value = mesh.config; });
+
+            try {
+                mesh.exterior_coordinate = topology::BuildExteriorCoordinate(*mesh.mesh, *mesh.reference_mesh, config);
+            } catch (const std::exception& exception) {
+                return std::unexpected(std::string("failed to reconstruct exterior coordinate: ") + exception.what());
+            }
+
+            if (!raw.has_value()) return {};
+
+            auto parsed = parse_exterior_coordinate(*raw);
+            if (!parsed) return std::unexpected(parsed.error());
+
+            const bool include_external_domain = mesh.config.include_external_domain.value_or(true);
+            if (!parsed->present) {
+                if (include_external_domain) return std::unexpected("EXTERIOR_COORDINATE is absent even though the mesh includes an external domain.");
+                if (mesh.exterior_coordinate) return std::unexpected("An exterior-coordinate field was reconstructed for a mesh without an external domain.");
+                return {};
+            }
+
+            if (!include_external_domain) return std::unexpected("EXTERIOR_COORDINATE is present for a mesh without an external domain.");
+            if (!mesh.exterior_coordinate || !mesh.exterior_coordinate->space || !mesh.exterior_coordinate->values) {
+                return std::unexpected("Unable to allocate the exterior-coordinate field while loading the mesh.");
+            }
+            if (parsed->scalar_dofs != mesh.exterior_coordinate->space->GetNDofs()) {
+                return std::unexpected(std::format("EXTERIOR_COORDINATE contains {} DOFs but the reconstructed space has {}.", parsed->scalar_dofs, mesh.exterior_coordinate->space->GetNDofs()));
+            }
+
+            constexpr double consistency_tolerance = 1.0e-12;
+
+            for (int dof = 0; dof < parsed->scalar_dofs; ++dof) {
+                const double stored_coordinate = parsed->values[static_cast<size_t>(dof)];
+                const double reconstructed_coordinate = (*mesh.exterior_coordinate->values)(dof);
+
+                if (!std::isfinite(stored_coordinate) || stored_coordinate < 0.0 || stored_coordinate > 1.0) {
+                    return std::unexpected(std::format("EXTERIOR_COORDINATE DOF {} has invalid stored value {}.", dof, stored_coordinate));
+                }
+                if (std::abs(stored_coordinate - reconstructed_coordinate) > consistency_tolerance) {
+                    return std::unexpected(std::format("EXTERIOR_COORDINATE DOF {} is inconsistent with the reference mesh: stored value {}, reconstructed value {}.", dof, stored_coordinate, reconstructed_coordinate));
+                }
+
+                (*mesh.exterior_coordinate->values)(dof) = stored_coordinate;
+            }
+
+            return {};
+        }
 
         std::expected<ParsedMeta, std::string> parse_metadata(std::istream& is) {
             auto blocks = extract_blocks(is);
@@ -440,6 +610,10 @@ END BLOCK CONFIG)",
             if (!rmesh) return std::unexpected(rmesh.error());
             pm.rmesh_raw = *rmesh;
 
+            if (const auto exterior_coordinate = blocks->find("EXTERIOR_COORDINATE"); exterior_coordinate != blocks->end()) {
+                pm.exterior_coordinate_raw = exterior_coordinate->second;
+            }
+
             return pm;
         }
 
@@ -455,16 +629,18 @@ END BLOCK CONFIG)",
         std::string rmesh = format_reference_mesh(mesh);
 
         std::string config = format_config(mesh);
+        std::string exterior_coordinate = format_exterior_coordinate(mesh);
 
         ofs << header << "\n";
         ofs << pmesh << "\n";
         ofs << rmesh << "\n";
         ofs << config << "\n";
+        ofs << exterior_coordinate << "\n";
     }
 
     void SaveMesh(const mfem::Mesh& mesh, const std::string& filename) {
         std::ofstream ofs(filename);
-        ofs.precision(8);
+        ofs.precision(std::numeric_limits<double>::max_digits10);
         mesh.Print(ofs);
     }
 
@@ -574,6 +750,7 @@ END BLOCK CONFIG)",
 
         pm->mesh.mesh           = std::move(*m);
         pm->mesh.reference_mesh = std::move(*rm);
+        if (auto result = restore_exterior_coordinate(pm->mesh, pm->exterior_coordinate_raw); !result) return std::unexpected(result.error());
         return std::move(pm->mesh);
     }
 
@@ -609,6 +786,7 @@ END BLOCK CONFIG)",
 
         pm->mesh.mesh           = std::move(*m);
         pm->mesh.reference_mesh = std::move(*rm);
+        if (auto result = restore_exterior_coordinate(pm->mesh, pm->exterior_coordinate_raw); !result) return std::unexpected(result.error());
         return std::move(pm->mesh);
     }
 

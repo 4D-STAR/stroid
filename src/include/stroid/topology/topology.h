@@ -8,7 +8,9 @@
 namespace stroid::topology {
     /**
      * @brief Build the initial multi-block mesh topology for the star model.
-     * @param config Mesh configuration (uses radii and domain flags).
+     * @param config Mesh configuration (uses radii, domain flags, and `core_mapping`).
+     * The legacy `spherified` core uses one block; `multi_block` uses an
+     * inner Cartesian block and six core transition blocks.
      * @return Newly allocated mesh skeleton (not yet refined or curved).
      */
     std::unique_ptr<mfem::Mesh> BuildSkeleton(const fourdst::config::Config<config::MeshConfig> & config);

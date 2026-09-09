@@ -52,7 +52,8 @@ void register_config_bindings(pybind11::module_& m) {
                 .core_id = kwargs.contains("core_id") ? kwargs["core_id"].cast<size_t>() : core_id,
                 .envelope_id = kwargs.contains("envelope_id") ? kwargs["envelope_id"].cast<size_t>() : envelope_id,
                 .vacuum_id = kwargs.contains("vacuum_id") ? kwargs["vacuum_id"].cast<size_t>() : vacuum_id,
-                .optimization_methods = kwargs.contains("optimization_methods") ? kwargs["optimization_methods"].cast<stroid::config::OptimizationMethods>() : opt_method
+                .optimization_methods = kwargs.contains("optimization_methods") ? kwargs["optimization_methods"].cast<stroid::config::OptimizationMethods>() : opt_method,
+                .core_mapping = kwargs.contains("core_mapping") ? kwargs["core_mapping"].cast<std::string>() : "spherified"
             };
         }))
         .def_property(
@@ -198,5 +199,20 @@ void register_config_bindings(pybind11::module_& m) {
             [](stroid::config::MeshConfig& self, stroid::config::OptimizationMethods value) {
                 self.optimization_methods = value;
             }
-        );
+        )
+        .def_property(
+            "core_mapping",
+            [](const stroid::config::MeshConfig& self) {
+                return self.core_mapping;
+            },
+            [](stroid::config::MeshConfig& self, const std::string& value) {
+                if (value != "spherified" && value != "multi_block") {
+                    throw std::invalid_argument("Invalid core_mapping value. Must be 'spherified' or 'multi_block'.");
+                }
+                self.core_mapping = value;
+            }
+        )
+        .def("__repr__", [](const stroid::config::MeshConfig& self) {
+            return stroid::config::to_string(self);
+        });
 }
