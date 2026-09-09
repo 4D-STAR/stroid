@@ -7,6 +7,7 @@
 #include <ranges>
 #include <algorithm>
 #include <print>
+#include <limits>
 
 // ReSharper disable once CppUnusedIncludeDirective
 #include "mfem.hpp"
@@ -72,12 +73,14 @@ int main(int argc, char** argv) {
     std::optional<std::string> mesh_file;
     std::string output_filename = "stroid.mesh";
     bool view_mesh = false;
+    bool original_elements = false;
     bool no_save = false;
     std::string glvis_host = "localhost";
     int glvis_port = 19916;
 
     generate->add_option("-c,--config", config_filename, "Path to configuration file")->check(CLI::ExistingFile);
     generate->add_flag("-v,--view", view_mesh, "View the generated mesh using GLVis");
+    generate->add_flag("--original-elements", original_elements, "Display original cells; curved hanging faces may show GLVis tessellation gaps");
     generate->add_flag("-n,--no-save", no_save, "Do not save the generated mesh to a file");
     generate->add_option("--glvis-host", glvis_host, "GLVis server host")->capture_default_str();
     generate->add_option("--glvis-port", glvis_port, "GLVis server port")->capture_default_str();
@@ -85,6 +88,7 @@ int main(int argc, char** argv) {
 
     view->add_option("--host", glvis_host, "GLVis server host")->capture_default_str();
     view->add_option("--port", glvis_port, "GLVis server port")->capture_default_str();
+    view->add_flag("--original-elements", original_elements, "Display original cells; curved hanging faces may show GLVis tessellation gaps");
     view->add_option("-f,--file", mesh_file, "Path to .mesh file")->check(CLI::ExistingFile);
 
     auto to_lower = [](std::string s) {
@@ -167,7 +171,8 @@ int main(int argc, char** argv) {
                              "Mesh Viewer - Colored by Element ID",
                              selected_mode,
                              glvis_host,
-                             glvis_port);
+                             glvis_port,
+                             !original_elements);
         exit(0);
 
     }
@@ -178,11 +183,8 @@ int main(int argc, char** argv) {
         }
 
 
-        const std::unique_ptr<mfem::Mesh> mesh = stroid::topology::BuildSkeleton(cfg);
-        stroid::topology::Finalize(*mesh, cfg);
-        stroid::topology::PromoteToHighOrder(*mesh, cfg);
-        stroid::topology::ProjectMesh(*mesh, cfg);
-        stroid::topology::OptimizeMesh(*mesh, cfg);
+        auto generated = stroid::GenerateMesh(cfg);
+        mfem::Mesh* mesh = generated.mesh.get();
 
         if (!no_save) {
             const std::string& final_path = output_filename;
@@ -193,6 +195,7 @@ int main(int argc, char** argv) {
                         std::cerr << "WARNING! Saving to MFEM format without the standard '.mesh' extension. File will be called " << final_path << std::endl;
                     }
                     std::ofstream ofs(final_path);
+                    ofs.precision(std::numeric_limits<double>::max_digits10);
                     mesh->Print(ofs);
                     break;
                 }
@@ -201,12 +204,19 @@ int main(int argc, char** argv) {
                         std::cerr << "WARNING! Saving to VTU format without the standard '.vtu' extension. File will be called " << final_path << std::endl;
                     }
                     std::ofstream ofs(final_path);
+                    ofs.precision(std::numeric_limits<double>::max_digits10);
+                    // MFEM's stream overload writes an open Piece, allowing callers
+                    // to append fields. Supply the enclosing document for a mesh export.
+                    ofs << "<VTKFile type=\"UnstructuredGrid\" version=\"0.1\"";
+                    if (out_cfg.vtu.compression_level != 0) ofs << " compressor=\"vtkZLibDataCompressor\"";
+                    ofs << " byte_order=\"" << mfem::VTKByteOrder() << "\">\n<UnstructuredGrid>\n";
                     mesh->PrintVTU(ofs,
                                         out_cfg.vtu.ref,
                                         out_cfg.vtu.format,
                                         out_cfg.vtu.high_order_output,
                                         out_cfg.vtu.compression_level,
                                         out_cfg.vtu.bdr_elements);
+                    ofs << "</Piece>\n</UnstructuredGrid>\n</VTKFile>\n";
                     break;
                 }
                 case MESH_FORMATS::VTK: {
@@ -239,7 +249,8 @@ int main(int argc, char** argv) {
                                  "Spheroidal Mesh - Colored by Element ID",
                                  stroid::IO::VISUALIZATION_MODE::ELEMENT_ID,
                                  glvis_host,
-                                 glvis_port);
+                                 glvis_port,
+                                 !original_elements);
         }
     } else if (!*info) {
         std::println("Usage: {} [generate|info|view] --help", argv[0]);

@@ -31,7 +31,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="Logo.png"/></td>
   <td id="projectalign">
-   <div id="projectname">stroid<span id="projectnumber">&#160;v0.2.1</span>
+   <div id="projectname">stroid<span id="projectnumber">&#160;v0.6.0</span>
    </div>
    <div id="projectbrief">Multi-block curvilinear mesh generation</div>
   </td>
@@ -102,22 +102,419 @@ $(function(){initNavTree('namespacestroid.html',''); initResizable(true); });
 
 <div class="header">
   <div class="summary">
-<a href="#namespaces">Namespaces</a>  </div>
+<a href="#namespaces">Namespaces</a> &#124;
+<a href="#nested-classes">Classes</a> &#124;
+<a href="#enum-members">Enumerations</a> &#124;
+<a href="#func-members">Functions</a> &#124;
+<a href="#var-members">Variables</a>  </div>
   <div class="headertitle"><div class="title">stroid Namespace Reference</div></div>
 </div><!--header-->
 <div class="contents">
+
+<p>Public API surface for the stroid mesh generation library.  
+<a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
 Namespaces</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacestroid_1_1config.html">config</a></td></tr>
+<tr class="memdesc:namespacestroid_1_1config"><td class="mdescLeft">&#160;</td><td class="mdescRight">Configuration types and defaults for mesh generation. <br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacestroid_1_1exceptions.html">exceptions</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacestroid_1_1_i_o.html">IO</a></td></tr>
+<tr class="memdesc:namespacestroid_1_1_i_o"><td class="mdescLeft">&#160;</td><td class="mdescRight">Mesh serialization and visualization helpers. <br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacestroid_1_1refinement.html">refinement</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacestroid_1_1stats.html">stats</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacestroid_1_1topology.html">topology</a></td></tr>
+<tr class="memdesc:namespacestroid_1_1topology"><td class="mdescLeft">&#160;</td><td class="mdescRight">Topology construction and curvilinear mapping utilities. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacestroid_1_1utils.html">utils</a></td></tr>
+<tr class="memdesc:namespacestroid_1_1utils"><td class="mdescLeft">&#160;</td><td class="mdescRight">Mesh inspection and validation utilities. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
+Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structstroid_1_1_scalar_mesh_field.html">ScalarMeshField</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structstroid_1_1_stroid_mesh.html">StroidMesh</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
+Enumerations</h2></td></tr>
+<tr class="memitem:a90f6d065df7b5224bbfc04c6d89c467e" id="r_a90f6d065df7b5224bbfc04c6d89c467e"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a90f6d065df7b5224bbfc04c6d89c467e">MFEM_MESH_TYPE</a> { <a class="el" href="#a90f6d065df7b5224bbfc04c6d89c467ea7b804a28d6154ab8007287532037f1d0">SERIAL</a>
+, <a class="el" href="#a90f6d065df7b5224bbfc04c6d89c467eadf13a99b035d6f0bce4f44ab18eec8eb">PARALLEL</a>
+ }</td></tr>
+<tr class="separator:a90f6d065df7b5224bbfc04c6d89c467e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:a009af3074e8681e87067228deab670d6" id="r_a009af3074e8681e87067228deab670d6"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structstroid_1_1_stroid_mesh.html">StroidMesh</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a009af3074e8681e87067228deab670d6">GenerateMesh</a> (const fourdst::config::Config&lt; <a class="el" href="structstroid_1_1config_1_1_mesh_config.html">stroid::config::MeshConfig</a> &gt; &amp;input)</td></tr>
+<tr class="separator:a009af3074e8681e87067228deab670d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2e8a90a2a7e9606de8b07cf330c0fd8d" id="r_a2e8a90a2a7e9606de8b07cf330c0fd8d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structstroid_1_1_stroid_mesh.html">StroidMesh</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2e8a90a2a7e9606de8b07cf330c0fd8d">GenerateMesh</a> (const <a class="el" href="structstroid_1_1config_1_1_mesh_config.html">stroid::config::MeshConfig</a> &amp;config)</td></tr>
+<tr class="separator:a2e8a90a2a7e9606de8b07cf330c0fd8d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae9643927d87d14a87970569dd0d8f3ae" id="r_ae9643927d87d14a87970569dd0d8f3ae"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structstroid_1_1_stroid_mesh.html">StroidMesh</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae9643927d87d14a87970569dd0d8f3ae">GenerateMesh</a> (const std::string &amp;filename)</td></tr>
+<tr class="separator:ae9643927d87d14a87970569dd0d8f3ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
+Variables</h2></td></tr>
+<tr class="memitem:af6ce344ae299e3ad50f4ad30f3e98fb4" id="r_af6ce344ae299e3ad50f4ad30f3e98fb4"><td class="memItemLeft" align="right" valign="top">list&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af6ce344ae299e3ad50f4ad30f3e98fb4">__all__</a> = ['config', 'exceptions', 'IO', 'refinement', 'stats', '<a class="el" href="#a009af3074e8681e87067228deab670d6">GenerateMesh</a>', '<a class="el" href="structstroid_1_1_stroid_mesh.html">StroidMesh</a>']</td></tr>
+<tr class="separator:af6ce344ae299e3ad50f4ad30f3e98fb4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7515d5089908807b72e300799c8e6d8a" id="r_a7515d5089908807b72e300799c8e6d8a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7515d5089908807b72e300799c8e6d8a">_meta</a> = importlib.metadata.metadata('stroid')</td></tr>
+<tr class="separator:a7515d5089908807b72e300799c8e6d8a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6c6c3bffa4c5eaa2cbfa16072a66ec85" id="r_a6c6c3bffa4c5eaa2cbfa16072a66ec85"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6c6c3bffa4c5eaa2cbfa16072a66ec85">__version__</a> = <a class="el" href="#a7515d5089908807b72e300799c8e6d8a">_meta</a>['Version']</td></tr>
+<tr class="separator:a6c6c3bffa4c5eaa2cbfa16072a66ec85"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a66665c450e6087c6d5d85fe337229886" id="r_a66665c450e6087c6d5d85fe337229886"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a66665c450e6087c6d5d85fe337229886">__license__</a> = <a class="el" href="#a7515d5089908807b72e300799c8e6d8a">_meta</a>['License']</td></tr>
+<tr class="separator:a66665c450e6087c6d5d85fe337229886"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a46eadd157b4003bbf1df5f46df72ecf6" id="r_a46eadd157b4003bbf1df5f46df72ecf6"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a46eadd157b4003bbf1df5f46df72ecf6">__description__</a> = <a class="el" href="#a7515d5089908807b72e300799c8e6d8a">_meta</a>['Summary']</td></tr>
+<tr class="separator:a46eadd157b4003bbf1df5f46df72ecf6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0980d815006142018342badd4a344b75" id="r_a0980d815006142018342badd4a344b75"><td class="memItemLeft" align="right" valign="top">str&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0980d815006142018342badd4a344b75">__author__</a> = 'Emily M. Boudreaux'</td></tr>
+<tr class="separator:a0980d815006142018342badd4a344b75"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a82f32fe152e5f48927bba40b0131c047" id="r_a82f32fe152e5f48927bba40b0131c047"><td class="memItemLeft" align="right" valign="top">str&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a82f32fe152e5f48927bba40b0131c047">__url__</a> = 'https://github.com/4D-STAR/stroid'</td></tr>
+<tr class="separator:a82f32fe152e5f48927bba40b0131c047"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7aa709789d28ac6d51079f35b030fb7b" id="r_a7aa709789d28ac6d51079f35b030fb7b"><td class="memItemLeft" align="right" valign="top">str&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7aa709789d28ac6d51079f35b030fb7b">__email__</a> = 'emily.boudreaux@dartmouth.edu'</td></tr>
+<tr class="separator:a7aa709789d28ac6d51079f35b030fb7b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6c93a0ee650df592ef5c32c3e6b110e0" id="r_a6c93a0ee650df592ef5c32c3e6b110e0"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6c93a0ee650df592ef5c32c3e6b110e0">_PACKAGE_DIR</a> = Path(__file__).resolve().parent</td></tr>
+<tr class="separator:a6c93a0ee650df592ef5c32c3e6b110e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Public API surface for the stroid mesh generation library. </p>
+<p>This namespace aggregates configuration, topology construction, mapping, and mesh utilities for building curvilinear multi-block meshes.</p>
+<dl class="section user"><dt>Example: build a mesh programmatically</dt><dd><div class="fragment"><div class="line"><span class="preprocessor">#include &lt;memory&gt;</span></div>
+<div class="line"><span class="preprocessor">#include &quot;mfem.hpp&quot;</span></div>
+<div class="line"><span class="preprocessor">#include &quot;fourdst/config/config.h&quot;</span></div>
+<div class="line"><span class="preprocessor">#include &quot;<a class="code" href="stroid_8h.html">stroid/stroid.h</a>&quot;</span></div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">int</span> main() {</div>
+<div class="line">    fourdst::config::Config&lt;stroid::config::MeshConfig&gt; cfg;</div>
+<div class="line">    <span class="keyword">auto</span> mesh = <a class="code hl_function" href="namespacestroid_1_1topology.html#abc0d8a1fb8e9c5ac0e259e4c93db7892">stroid::topology::BuildSkeleton</a>(cfg);</div>
+<div class="line">    <a class="code hl_function" href="namespacestroid_1_1topology.html#a62774bcba7ea1a485892dcd4bed6425b">stroid::topology::Finalize</a>(*mesh, cfg);</div>
+<div class="line">    <a class="code hl_function" href="namespacestroid_1_1topology.html#a5907aa2e639cda703d48d177abc37caf">stroid::topology::PromoteToHighOrder</a>(*mesh, cfg);</div>
+<div class="line">    <a class="code hl_function" href="namespacestroid_1_1topology.html#a836ed13e5bac63e7952c3ce4e5532e78">stroid::topology::ProjectMesh</a>(*mesh, cfg);</div>
+<div class="line">    <a class="code hl_function" href="namespacestroid_1_1_i_o.html#ab4c8bda7ab370e34376a7832fbf0951e">stroid::IO::SaveVTU</a>(*mesh, <span class="stringliteral">&quot;stroid&quot;</span>);</div>
+<div class="line">}</div>
+<div class="ttc" id="anamespacestroid_1_1_i_o_html_ab4c8bda7ab370e34376a7832fbf0951e"><div class="ttname"><a href="namespacestroid_1_1_i_o.html#ab4c8bda7ab370e34376a7832fbf0951e">stroid::IO::SaveVTU</a></div><div class="ttdeci">void SaveVTU(mfem::Mesh &amp;mesh, const std::string &amp;exportName)</div><div class="ttdoc">Save a mesh as a ParaView VTU dataset.</div><div class="ttdef"><b>Definition</b> mesh.cpp:710</div></div>
+<div class="ttc" id="anamespacestroid_1_1topology_html_a5907aa2e639cda703d48d177abc37caf"><div class="ttname"><a href="namespacestroid_1_1topology.html#a5907aa2e639cda703d48d177abc37caf">stroid::topology::PromoteToHighOrder</a></div><div class="ttdeci">void PromoteToHighOrder(mfem::Mesh &amp;mesh, const fourdst::config::Config&lt; config::MeshConfig &gt; &amp;config)</div><div class="ttdoc">Promote a mesh to high-order by attaching an H1 nodal finite element space.</div><div class="ttdef"><b>Definition</b> curvilinear.cpp:43</div></div>
+<div class="ttc" id="anamespacestroid_1_1topology_html_a62774bcba7ea1a485892dcd4bed6425b"><div class="ttname"><a href="namespacestroid_1_1topology.html#a62774bcba7ea1a485892dcd4bed6425b">stroid::topology::Finalize</a></div><div class="ttdeci">void Finalize(mfem::Mesh &amp;mesh, const fourdst::config::Config&lt; config::MeshConfig &gt; &amp;config)</div><div class="ttdoc">Finalize topology, validate orientation, and apply the configured refinement policy.</div><div class="ttdef"><b>Definition</b> topology.cpp:234</div></div>
+<div class="ttc" id="anamespacestroid_1_1topology_html_a836ed13e5bac63e7952c3ce4e5532e78"><div class="ttname"><a href="namespacestroid_1_1topology.html#a836ed13e5bac63e7952c3ce4e5532e78">stroid::topology::ProjectMesh</a></div><div class="ttdeci">void ProjectMesh(mfem::Mesh &amp;mesh, const fourdst::config::Config&lt; config::MeshConfig &gt; &amp;config)</div><div class="ttdoc">Project high-order mesh nodes using the configured curvilinear mapping.</div><div class="ttdef"><b>Definition</b> curvilinear.cpp:47</div></div>
+<div class="ttc" id="anamespacestroid_1_1topology_html_abc0d8a1fb8e9c5ac0e259e4c93db7892"><div class="ttname"><a href="namespacestroid_1_1topology.html#abc0d8a1fb8e9c5ac0e259e4c93db7892">stroid::topology::BuildSkeleton</a></div><div class="ttdeci">std::unique_ptr&lt; mfem::Mesh &gt; BuildSkeleton(const fourdst::config::Config&lt; config::MeshConfig &gt; &amp;config)</div><div class="ttdoc">Build the initial multi-block mesh topology for the star model.</div><div class="ttdef"><b>Definition</b> topology.cpp:114</div></div>
+<div class="ttc" id="astroid_8h_html"><div class="ttname"><a href="stroid_8h.html">stroid.h</a></div></div>
+</div><!-- fragment --></dd></dl>
+<dl class="section user"><dt>Example: tweak config then visualize</dt><dd><div class="fragment"><div class="line">fourdst::config::Config&lt;stroid::config::MeshConfig&gt; cfg;</div>
+<div class="line">cfg-&gt;order = 4;</div>
+<div class="line">cfg-&gt;flattening = 0.1;</div>
+<div class="line"><span class="keyword">auto</span> mesh = <a class="code hl_function" href="namespacestroid_1_1topology.html#abc0d8a1fb8e9c5ac0e259e4c93db7892">stroid::topology::BuildSkeleton</a>(cfg);</div>
+<div class="line"><a class="code hl_function" href="namespacestroid_1_1topology.html#a62774bcba7ea1a485892dcd4bed6425b">stroid::topology::Finalize</a>(*mesh, cfg);</div>
+<div class="line"><a class="code hl_function" href="namespacestroid_1_1topology.html#a5907aa2e639cda703d48d177abc37caf">stroid::topology::PromoteToHighOrder</a>(*mesh, cfg);</div>
+<div class="line"><a class="code hl_function" href="namespacestroid_1_1topology.html#a836ed13e5bac63e7952c3ce4e5532e78">stroid::topology::ProjectMesh</a>(*mesh, cfg);</div>
+<div class="line"><a class="code hl_function" href="namespacestroid_1_1_i_o.html#a7bc6daa0f9ef8327355022363e1db3fb">stroid::IO::ViewMesh</a>(*mesh, <span class="stringliteral">&quot;Stroid Mesh&quot;</span>, <a class="code hl_enumvalue" href="namespacestroid_1_1_i_o.html#ad4048304d8a0c7075d2b2a6e465d0b6eac31a2fe3e97d218a154c1947b43d6bbf">stroid::IO::VISUALIZATION_MODE::ELEMENT_ID</a>, <span class="stringliteral">&quot;localhost&quot;</span>, 19916);</div>
+<div class="ttc" id="anamespacestroid_1_1_i_o_html_a7bc6daa0f9ef8327355022363e1db3fb"><div class="ttname"><a href="namespacestroid_1_1_i_o.html#a7bc6daa0f9ef8327355022363e1db3fb">stroid::IO::ViewMesh</a></div><div class="ttdeci">void ViewMesh(mfem::Mesh &amp;mesh, const std::string &amp;title, VISUALIZATION_MODE mode, const std::string &amp;vishost, int visport, bool conforming_display=true)</div><div class="ttdoc">Stream a mesh to a running GLVis server for interactive viewing.</div><div class="ttdef"><b>Definition</b> mesh.cpp:727</div></div>
+<div class="ttc" id="anamespacestroid_1_1_i_o_html_ad4048304d8a0c7075d2b2a6e465d0b6eac31a2fe3e97d218a154c1947b43d6bbf"><div class="ttname"><a href="namespacestroid_1_1_i_o.html#ad4048304d8a0c7075d2b2a6e465d0b6eac31a2fe3e97d218a154c1947b43d6bbf">stroid::IO::VISUALIZATION_MODE::ELEMENT_ID</a></div><div class="ttdeci">@ ELEMENT_ID</div><div class="ttdoc">Color elements by their element attribute/ID.</div><div class="ttdef"><b>Definition</b> mesh.h:19</div></div>
+</div><!-- fragment --> </dd></dl>
+</div><h2 class="groupheader">Enumeration Type Documentation</h2>
+<a id="a90f6d065df7b5224bbfc04c6d89c467e" name="a90f6d065df7b5224bbfc04c6d89c467e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a90f6d065df7b5224bbfc04c6d89c467e">&#9670;&#160;</a></span>MFEM_MESH_TYPE</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum class <a class="el" href="#a90f6d065df7b5224bbfc04c6d89c467e">stroid::MFEM_MESH_TYPE</a></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel strong">strong</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a90f6d065df7b5224bbfc04c6d89c467ea7b804a28d6154ab8007287532037f1d0" name="a90f6d065df7b5224bbfc04c6d89c467ea7b804a28d6154ab8007287532037f1d0"></a>SERIAL&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a90f6d065df7b5224bbfc04c6d89c467eadf13a99b035d6f0bce4f44ab18eec8eb" name="a90f6d065df7b5224bbfc04c6d89c467eadf13a99b035d6f0bce4f44ab18eec8eb"></a>PARALLEL&#160;</td><td class="fielddoc"></td></tr>
+</table>
+
+</div>
+</div>
+<h2 class="groupheader">Function Documentation</h2>
+<a id="a009af3074e8681e87067228deab670d6" name="a009af3074e8681e87067228deab670d6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a009af3074e8681e87067228deab670d6">&#9670;&#160;</a></span>GenerateMesh() <span class="overload">[1/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structstroid_1_1_stroid_mesh.html">StroidMesh</a> stroid::GenerateMesh </td>
+          <td>(</td>
+          <td class="paramtype">const fourdst::config::Config&lt; <a class="el" href="structstroid_1_1config_1_1_mesh_config.html">stroid::config::MeshConfig</a> &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>input</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ae9643927d87d14a87970569dd0d8f3ae" name="ae9643927d87d14a87970569dd0d8f3ae"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae9643927d87d14a87970569dd0d8f3ae">&#9670;&#160;</a></span>GenerateMesh() <span class="overload">[2/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structstroid_1_1_stroid_mesh.html">StroidMesh</a> stroid::GenerateMesh </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>filename</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a2e8a90a2a7e9606de8b07cf330c0fd8d" name="a2e8a90a2a7e9606de8b07cf330c0fd8d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2e8a90a2a7e9606de8b07cf330c0fd8d">&#9670;&#160;</a></span>GenerateMesh() <span class="overload">[3/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structstroid_1_1_stroid_mesh.html">StroidMesh</a> stroid::GenerateMesh </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structstroid_1_1config_1_1_mesh_config.html">stroid::config::MeshConfig</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>config</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<h2 class="groupheader">Variable Documentation</h2>
+<a id="af6ce344ae299e3ad50f4ad30f3e98fb4" name="af6ce344ae299e3ad50f4ad30f3e98fb4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af6ce344ae299e3ad50f4ad30f3e98fb4">&#9670;&#160;</a></span>__all__</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">list stroid.__all__ = ['config', 'exceptions', 'IO', 'refinement', 'stats', '<a class="el" href="#a009af3074e8681e87067228deab670d6">GenerateMesh</a>', '<a class="el" href="structstroid_1_1_stroid_mesh.html">StroidMesh</a>']</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a0980d815006142018342badd4a344b75" name="a0980d815006142018342badd4a344b75"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0980d815006142018342badd4a344b75">&#9670;&#160;</a></span>__author__</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">str stroid.__author__ = 'Emily M. Boudreaux'</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a46eadd157b4003bbf1df5f46df72ecf6" name="a46eadd157b4003bbf1df5f46df72ecf6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a46eadd157b4003bbf1df5f46df72ecf6">&#9670;&#160;</a></span>__description__</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">stroid.__description__ = <a class="el" href="#a7515d5089908807b72e300799c8e6d8a">_meta</a>['Summary']</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a7aa709789d28ac6d51079f35b030fb7b" name="a7aa709789d28ac6d51079f35b030fb7b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7aa709789d28ac6d51079f35b030fb7b">&#9670;&#160;</a></span>__email__</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">str stroid.__email__ = 'emily.boudreaux@dartmouth.edu'</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a66665c450e6087c6d5d85fe337229886" name="a66665c450e6087c6d5d85fe337229886"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a66665c450e6087c6d5d85fe337229886">&#9670;&#160;</a></span>__license__</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">str stroid.__license__ = <a class="el" href="#a7515d5089908807b72e300799c8e6d8a">_meta</a>['License']</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a82f32fe152e5f48927bba40b0131c047" name="a82f32fe152e5f48927bba40b0131c047"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a82f32fe152e5f48927bba40b0131c047">&#9670;&#160;</a></span>__url__</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">str stroid.__url__ = 'https://github.com/4D-STAR/stroid'</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a6c6c3bffa4c5eaa2cbfa16072a66ec85" name="a6c6c3bffa4c5eaa2cbfa16072a66ec85"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6c6c3bffa4c5eaa2cbfa16072a66ec85">&#9670;&#160;</a></span>__version__</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">str stroid.__version__ = <a class="el" href="#a7515d5089908807b72e300799c8e6d8a">_meta</a>['Version']</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a7515d5089908807b72e300799c8e6d8a" name="a7515d5089908807b72e300799c8e6d8a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7515d5089908807b72e300799c8e6d8a">&#9670;&#160;</a></span>_meta</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">stroid._meta = importlib.metadata.metadata('stroid')</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel protected">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a6c93a0ee650df592ef5c32c3e6b110e0" name="a6c93a0ee650df592ef5c32c3e6b110e0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6c93a0ee650df592ef5c32c3e6b110e0">&#9670;&#160;</a></span>_PACKAGE_DIR</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">stroid._PACKAGE_DIR = Path(__file__).resolve().parent</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel protected">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 </div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

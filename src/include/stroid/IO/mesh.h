@@ -2,6 +2,7 @@
 #include <string>
 #include <expected>
 #include <istream>
+#include <memory>
 
 #include "mfem.hpp"
 
@@ -58,24 +59,41 @@ namespace stroid::IO {
     void SaveVTU(const stroid::StroidMesh& mesh, const std::string& exportName);
 
     /**
+     * @brief Make a display-only mesh copy with matching face subdivisions.
+     * This is purely for visualization and should not be used for any science goals.
+     * @param mesh Source mesh whose geometry is to be displayed.
+     * @return Independently owned copy with no hanging faces.
+     */
+    std::unique_ptr<mfem::Mesh> MakeConformingVisualizationMesh(const mfem::Mesh& mesh);
+
+    /**
      * @brief Stream a mesh to a running GLVis server for interactive viewing.
      * @param mesh Mesh to display.
      * @param title Window title shown in GLVis.
      * @param mode Attribute visualization mode.
      * @param vishost GLVis server host.
      * @param visport GLVis server port.
+     * @param conforming_display Refine a display-only copy at hanging interfaces
+     * to prevent GLVis tessellation gaps. Set false to inspect the original
+     * element layout, which can show rendering gaps on curved interfaces.
+     *
      */
-    void ViewMesh(mfem::Mesh &mesh, const std::string& title, VISUALIZATION_MODE mode, const std::string &vishost, int visport);
+    void ViewMesh(mfem::Mesh &mesh, const std::string& title, VISUALIZATION_MODE mode, const std::string &vishost, int visport, bool conforming_display=true);
 
-    void ViewMesh(const stroid::StroidMesh& mesh, const std::string& title, VISUALIZATION_MODE mode, const std::string &vishost, int visport);
+    void ViewMesh(const stroid::StroidMesh& mesh, const std::string& title, VISUALIZATION_MODE mode, const std::string &vishost, int visport, bool conforming_display=true);
 
     /**
-     * @brief Visualize boundary face valence (1=surface, 2=internal).
+     * @brief Color boundary-adjacent elements by face valence (1=surface, 2=internal).
+     * Untagged elements are zero; elements touching several tagged faces use
+     * the maximum valence. Values are computed before display subdivision.
      * @param mesh Mesh whose boundary faces are inspected.
+     * @param vishost GLVis server host.
+     * @param visport GLVis server port.
+     * @param conforming_display Use the same display-only refinement as ViewMesh.
      */
-    void VisualizeFaceValence(mfem::Mesh& mesh, const std::string &vishost, int visport);
+    void VisualizeFaceValence(mfem::Mesh& mesh, const std::string &vishost, int visport, bool conforming_display=true);
 
-    void VisualizeFaceValence(const stroid::StroidMesh& mesh, const std::string &vishost, int visport);
+    void VisualizeFaceValence(const stroid::StroidMesh& mesh, const std::string &vishost, int visport, bool conforming_display=true);
 
     std::expected<StroidMesh, std::string> ParseStroidMesh(std::istream& is);
     std::expected<StroidMesh, std::string> LoadStroidMesh(const std::string& filename);

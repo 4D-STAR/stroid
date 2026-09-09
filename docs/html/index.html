@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.13.2"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>stroid: Stroid</title>
+<title>stroid: stroid</title>
 <link rel="icon" href="Logo.png" type="image/x-icon" />
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
@@ -31,7 +31,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="Logo.png"/></td>
   <td id="projectalign">
-   <div id="projectname">stroid<span id="projectnumber">&#160;v0.2.1</span>
+   <div id="projectname">stroid<span id="projectnumber">&#160;v0.6.0</span>
    </div>
    <div id="projectbrief">Multi-block curvilinear mesh generation</div>
   </td>
@@ -101,32 +101,34 @@ $(function(){initNavTree('index.html',''); initResizable(true); });
 </div>
 
 <div><div class="header">
-  <div class="headertitle"><div class="title">Stroid </div></div>
+  <div class="headertitle"><div class="title">stroid </div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p><a class="anchor" id="md_docs_2static_2mainpage"></a></p>
-<h1><a class="anchor" id="autotoc_md1"></a>
-A multi-block mesh generation tool for stellar modeling</h1>
+<div class="textblock"><p><a class="anchor" id="md_docs_2static_2mainpage"></a> <img src="assets/logo/Logo.png" alt="stroid logo" class="inline"/> </p>
+<h1><a class="anchor" id="autotoc_md0"></a>
+Stroid</h1>
+<h2><a class="anchor" id="autotoc_md1"></a>
+A multi-block mesh generation tool for stellar modeling</h2>
 <p>Stroid is a simple multi-block mesh generation tool designed to generate multi-domain meshes for 3D finite element modeling of stellar physics. It uses the MFEM library for mesh generation and manipulation and is capable of generating high-order curvilinear and non-singular meshes.</p>
 <blockquote class="doxtable">
 <p>Note: Stroid is under active development and is not yet stable. Features and interfaces may change in future releases. </p>
 </blockquote>
-<h1><a class="anchor" id="autotoc_md2"></a>
-Building and Installing</h1>
+<h2><a class="anchor" id="autotoc_md2"></a>
+Building and Installing</h2>
 <p>Stroid uses meson as its build system, specifically we require version 1.3.0 or higher. Further, stroid depends on C++23 standard library features, so both a compatible compiler and standard template library are required. All other dependencies are handled by meson and will be downloaded and built automatically.</p>
-<h2><a class="anchor" id="autotoc_md3"></a>
-Building</h2>
+<h3><a class="anchor" id="autotoc_md3"></a>
+Building</h3>
 <div class="fragment"><div class="line">git clone https://github.com/4D-STAR/stroid.git</div>
 <div class="line">cd stroid</div>
 <div class="line">meson setup build</div>
 <div class="line">meson compile -C build</div>
 <div class="line">meson test -C build</div>
 <div class="line">meson install -C build</div>
-</div><!-- fragment --><h3><a class="anchor" id="autotoc_md4"></a>
-Uninstalling</h3>
+</div><!-- fragment --><h4><a class="anchor" id="autotoc_md4"></a>
+Uninstalling</h4>
 <p>To uninstall stroid, if you built it using meson and the default ninja backend, you can use the following command </p><div class="fragment"><div class="line">sudo ninja uninstall -C build</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md5"></a>
-Running</h2>
+</div><!-- fragment --><h3><a class="anchor" id="autotoc_md5"></a>
+Running</h3>
 <p>Stroid can be used either from the command line or from C++. The command line interface is the simplest way to get started. After installation, the <code>stroid generate</code> command should be available in your terminal.</p>
 <div class="fragment"><div class="line">stroid generate --help</div>
 </div><!-- fragment --><p>The main way to interface with this is through the subcommands (currently only <code>generate</code> and <code>info</code> are available):</p>
@@ -146,8 +148,8 @@ Running</h2>
 </ul>
 <p>Further, mesh generation options are loaded from a toml file, a default version of this file can be saved by running </p><div class="fragment"><div class="line">stroid info -d</div>
 </div><!-- fragment --><p> which will save a default config file to <code>default.toml</code></p>
-<h2><a class="anchor" id="autotoc_md6"></a>
-Configuration File</h2>
+<h3><a class="anchor" id="autotoc_md6"></a>
+Configuration File</h3>
 <p>Stroid uses a TOML configuration file to specify the parameters for mesh generation. An example configuration file is found below</p>
 <div class="fragment"><div class="line">[main]</div>
 <div class="line">refinement_levels = 2</div>
@@ -164,19 +166,25 @@ Configuration File</h2>
 <div class="line">core_id = 1</div>
 <div class="line">envelope_id = 2</div>
 <div class="line">vacuum_id = 3</div>
+<div class="line">core_mapping = &quot;multi_block&quot;</div>
+<div class="line"> </div>
+<div class="line"> </div>
+<div class="line">[main.optimization_methods]</div>
+<div class="line">tmop = false</div>
+<div class="line">smoothstep = true</div>
 </div><!-- fragment --><table class="markdownTable">
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Parameter   </th><th class="markdownTableHeadNone">Description   </th><th class="markdownTableHeadNone">Default    </th></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">refinement_levels   </td><td class="markdownTableBodyNone">Number of uniform refinement levels to apply to the mesh after generation   </td><td class="markdownTableBodyNone">4    </td></tr>
+<td class="markdownTableBodyNone">refinement_levels   </td><td class="markdownTableBodyNone">Stellar minimum depth, or uniform depth when vacuum overrides are omitted   </td><td class="markdownTableBodyNone">4    </td></tr>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">order   </td><td class="markdownTableBodyNone">The polynomial order of the finite elements in the mesh   </td><td class="markdownTableBodyNone">3    </td></tr>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">include_external_domain   </td><td class="markdownTableBodyNone">Whether to include an external domain extending to r_infinity   </td><td class="markdownTableBodyNone">true    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">r_core   </td><td class="markdownTableBodyNone">The radius of the core region of the star   </td><td class="markdownTableBodyNone">1.5    </td></tr>
+<td class="markdownTableBodyNone">r_core   </td><td class="markdownTableBodyNone">The radius of the core region of the star   </td><td class="markdownTableBodyNone">0.25    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">r_star   </td><td class="markdownTableBodyNone">The radius of the star   </td><td class="markdownTableBodyNone">5.0    </td></tr>
+<td class="markdownTableBodyNone">r_star   </td><td class="markdownTableBodyNone">The radius of the star   </td><td class="markdownTableBodyNone">1.0    </td></tr>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">flattening   </td><td class="markdownTableBodyNone">The flattening factor of the star (0 for spherical, &gt;0 for oblate)   </td><td class="markdownTableBodyNone">0    </td></tr>
 <tr class="markdownTableRowOdd">
@@ -194,45 +202,114 @@ Configuration File</h2>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">envelope_id   </td><td class="markdownTableBodyNone">The material ID to assign to the envelope region of the star   </td><td class="markdownTableBodyNone">2    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">vacuum_id   </td><td class="markdownTableBodyNone">The material ID to assign to the vacuum region of the star (if included)   </td><td class="markdownTableBodyNone">3   </td></tr>
+<td class="markdownTableBodyNone">vacuum_id   </td><td class="markdownTableBodyNone">The material ID to assign to the vacuum region of the star (if included)   </td><td class="markdownTableBodyNone">3    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">optimization_methods.tmop   </td><td class="markdownTableBodyNone">The tmop flag enables or disables the use of TMOP ideal shape unit size metric optimization during mesh generation. This can help improve the quality of the generated mesh, but will dramatically increase the time required for mesh generation.   </td><td class="markdownTableBodyNone">false    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">optimization_methods.smoothstep   </td><td class="markdownTableBodyNone">The smoothstep flag enables or disables the use of a smoothstep function to transition between the core and envelope regions of the star. This can help improve the quality of the generated mesh   </td><td class="markdownTableBodyNone">true    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">core_mapping   </td><td class="markdownTableBodyNone">The core mapping strategy to use for the mesh generation. Options are "spherified" (legacy) or "multi_block" (conditioned). The multi_block strategy is strongly preferred for its improved condition number.   </td><td class="markdownTableBodyNone">"multi_block"   </td></tr>
 </table>
-<p>If no configuration file is provided, stroid will use the default parameters listed above. Further, configuration files need only include parameters that differ from the defaults, any parameters not specified will use the default values.</p>
-<h2><a class="anchor" id="autotoc_md7"></a>
-C++ Interface</h2>
+<p>If no configuration file is provided, stroid will use the default parameters listed above. Further, configuration files need only include parameters that differ from the defaults. For compatibility with older TOML files, an omitted <code>core_mapping</code> uses <code>"spherified"</code>, and omitted TMOP controls leave optimization disabled. Set <code>core_mapping = "multi_block"</code> explicitly to use the conditioned mapping in a TOML file. Default-constructed C++ and Python <code>MeshConfig</code> objects select <code>"multi_block"</code>; other omitted TOML geometry fields use the defaults from <code>MeshConfig</code>.</p>
+<h3><a class="anchor" id="autotoc_md7"></a>
+Conditioned core mapping</h3>
+<p>There are two core mapping strategies, spherified and multi_block. Generally multi_block should be strongly preferred. The <code>core_mapping = "multi_block"</code> strategy avoids the radial rank loss at the eight corners of the spherified core block. It uses a Cartesian center plus six transition blocks inside the core. The inner cube has circumscribed radius <code>r_core / 2</code>; its six faces connect linearly to the existing spherical <code>r_core</code> interface. If enabled, spheroidal flattening is applied afterwards.</p>
+<div class="fragment"><div class="line">cfg = <a class="code hl_struct" href="structstroid_1_1config_1_1_mesh_config.html">stroid.config.MeshConfig</a>(core_mapping=<span class="stringliteral">&quot;multi_block&quot;</span>, refinement_levels=2)</div>
+<div class="line">cfg.optimization_methods = <a class="code hl_struct" href="structstroid_1_1config_1_1_optimization_methods.html">stroid.config.OptimizationMethods</a>(tmop=<span class="keyword">False</span>)</div>
+<div class="line">mesh = <a class="code hl_function" href="namespacestroid.html#a009af3074e8681e87067228deab670d6">stroid.GenerateMesh</a>(cfg)</div>
+<div class="ttc" id="anamespacestroid_html_a009af3074e8681e87067228deab670d6"><div class="ttname"><a href="namespacestroid.html#a009af3074e8681e87067228deab670d6">stroid::GenerateMesh</a></div><div class="ttdeci">StroidMesh GenerateMesh(const fourdst::config::Config&lt; stroid::config::MeshConfig &gt; &amp;input)</div><div class="ttdef"><b>Definition</b> stroid.h:52</div></div>
+<div class="ttc" id="astructstroid_1_1config_1_1_mesh_config_html"><div class="ttname"><a href="structstroid_1_1config_1_1_mesh_config.html">stroid::config::MeshConfig</a></div><div class="ttdoc">Configuration parameters for stroid mesh generation.</div><div class="ttdef"><b>Definition</b> config.h:25</div></div>
+<div class="ttc" id="astructstroid_1_1config_1_1_optimization_methods_html"><div class="ttname"><a href="structstroid_1_1config_1_1_optimization_methods.html">stroid::config::OptimizationMethods</a></div><div class="ttdef"><b>Definition</b> config.h:11</div></div>
+</div><!-- fragment --><p>The optional, non-installed <code>geometry_quality_experiment</code> target may be used to measure the actual high-order geometry at quadrature points, vertices, edges, and near-corner probes. You may build and run it explicitly:</p>
+<div class="fragment"><div class="line">meson compile -C build geometry_quality_experiment</div>
+<div class="line">build/tools/geometry_quality_experiment --orders 4 --refinements 2 \</div>
+<div class="line">    --contraction-probe --probe-order 3 --output core_comparison.csv</div>
+</div><!-- fragment --><h3><a class="anchor" id="autotoc_md8"></a>
+Nonconforming vacuum refinement</h3>
+<p>Stroid can keep the star and both ends of the vacuum well resolved while using coarser elements in the vacuum interior. Refinement is isotropic: each refinement splits a hexahedron into eight children. Note however that only one geometric polynomial <code>order</code> applies to every region.</p>
+<div class="fragment"><div class="line">[main]</div>
+<div class="line">refinement_levels = 4</div>
+<div class="line">vacuum_refinement_levels = 2</div>
+<div class="line"># Optional: omitted outer depth inherits refinement_levels (4 here).</div>
+<div class="line"># vacuum_outer_refinement_levels = 4</div>
+<div class="line">order = 3</div>
+<div class="line">include_external_domain = true</div>
+<div class="line">core_mapping = &quot;multi_block&quot;</div>
+<div class="line"> </div>
+<div class="line">[main.optimization_methods]</div>
+<div class="line">tmop = false</div>
+<div class="line">smoothstep = true</div>
+</div><!-- fragment --><p><code>configs/nonconforming_vacuum.toml</code> provides a complete example. The three depth settings are absolute minimum targets measured from the initial block topology:</p>
+<table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadNone">Setting   </th><th class="markdownTableHeadNone">Applies to   </th><th class="markdownTableHeadNone">Default    </th></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><code>refinement_levels</code>   </td><td class="markdownTableBodyNone">Core and envelope   </td><td class="markdownTableBodyNone"><code>4</code>    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><code>vacuum_refinement_levels</code>   </td><td class="markdownTableBodyNone">Vacuum interior   </td><td class="markdownTableBodyNone">Inherit <code>refinement_levels</code>    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><code>vacuum_outer_refinement_levels</code>   </td><td class="markdownTableBodyNone">Cells touching the vacuum outer boundary   </td><td class="markdownTableBodyNone">Inherit <code>refinement_levels</code>   </td></tr>
+</table>
+<p>Omitting both vacuum overrides preserves uniform generation. Supplying either activates the local refinement policy and requires <code>include_external_domain = true</code>. All levels must be nonnegative integers.</p>
+<p>Stroid enforces that vacuum cells touching the stellar surface match the stellar face subdivision. That is to say that the inner boundary of the vacuum region is conforming to the outer boundary of the stellar region. Further, the outer-boundary cells receive the outer target, and automatic grading limits neighboring refinement depths to one level. This two layer approach is intended to allow for refinement when using compactification maps.</p>
+<div class="fragment"><div class="line"><span class="keyword">import</span> stroid</div>
+<div class="line"> </div>
+<div class="line">cfg = <a class="code hl_struct" href="structstroid_1_1config_1_1_mesh_config.html">stroid.config.MeshConfig</a>(</div>
+<div class="line">    refinement_levels=4,</div>
+<div class="line">    vacuum_refinement_levels=2,</div>
+<div class="line">    vacuum_outer_refinement_levels=<span class="keywordtype">None</span>,  <span class="comment"># Inherit stellar depth.</span></div>
+<div class="line">    order=3,</div>
+<div class="line">    core_mapping=<span class="stringliteral">&quot;multi_block&quot;</span>,</div>
+<div class="line">    optimization_methods=<a class="code hl_struct" href="structstroid_1_1config_1_1_optimization_methods.html">stroid.config.OptimizationMethods</a>(tmop=<span class="keyword">False</span>),</div>
+<div class="line">)</div>
+<div class="line">mesh = <a class="code hl_function" href="namespacestroid.html#a009af3074e8681e87067228deab670d6">stroid.GenerateMesh</a>(cfg)</div>
+<div class="line">features = stroid.stats.MESH_STAT_DEFAULT | stroid.stats.MeshStatFeatures.ELEMENT_COUNT</div>
+<div class="line">stats = <a class="code hl_function" href="namespacestroid_1_1stats.html#ae340adbe2df53adc3946e8df38dd1acf">stroid.stats.ComputeMeshStats</a>(mesh, features)</div>
+<div class="line">print(stats.element_counts.vacuum)</div>
+<div class="line">print(stats.refinement.vacuum.min_depth, stats.refinement.vacuum.max_depth)</div>
+<div class="line">print(stats.refinement.geometry_dofs, stats.refinement.geometry_true_dofs)</div>
+<div class="line">print(stats.conformity.conforming, stats.conformity.n_nonconforming_faces)</div>
+<div class="line"> </div>
+<div class="line"><a class="code hl_function" href="namespacestroid_1_1_i_o.html#ab854167b428c1a77597d9bb3a972b363">stroid.IO.SaveStroidMesh</a>(mesh, <span class="stringliteral">&quot;graded.stroid&quot;</span>)</div>
+<div class="line">restored = <a class="code hl_function" href="namespacestroid_1_1_i_o.html#a3f39dc149d5650468b579c76d00f991d">stroid.IO.LoadStroidMesh</a>(<span class="stringliteral">&quot;graded.stroid&quot;</span>)</div>
+<div class="line"><a class="code hl_function" href="namespacestroid_1_1refinement.html#a1f203a99bc3096f62f7584fd4c19122c">stroid.refinement.UniformRefinement</a>(restored, 1)</div>
+<div class="ttc" id="anamespacestroid_1_1_i_o_html_a3f39dc149d5650468b579c76d00f991d"><div class="ttname"><a href="namespacestroid_1_1_i_o.html#a3f39dc149d5650468b579c76d00f991d">stroid::IO::LoadStroidMesh</a></div><div class="ttdeci">std::expected&lt; StroidMesh, std::string &gt; LoadStroidMesh(const std::string &amp;filename)</div><div class="ttdef"><b>Definition</b> mesh.cpp:838</div></div>
+<div class="ttc" id="anamespacestroid_1_1_i_o_html_ab854167b428c1a77597d9bb3a972b363"><div class="ttname"><a href="namespacestroid_1_1_i_o.html#ab854167b428c1a77597d9bb3a972b363">stroid::IO::SaveStroidMesh</a></div><div class="ttdeci">void SaveStroidMesh(const StroidMesh &amp;mesh, const std::string &amp;filename, const std::string &amp;comment=&quot;&quot;)</div><div class="ttdef"><b>Definition</b> mesh.cpp:681</div></div>
+<div class="ttc" id="anamespacestroid_1_1refinement_html_a1f203a99bc3096f62f7584fd4c19122c"><div class="ttname"><a href="namespacestroid_1_1refinement.html#a1f203a99bc3096f62f7584fd4c19122c">stroid::refinement::UniformRefinement</a></div><div class="ttdeci">void UniformRefinement(StroidMesh &amp;mesh, size_t levels)</div><div class="ttdoc">Refine every current leaf, preserving any existing nonconforming hierarchy. Rebuilds constrained geom...</div><div class="ttdef"><b>Definition</b> uniform.cpp:14</div></div>
+<div class="ttc" id="anamespacestroid_1_1stats_html_ae340adbe2df53adc3946e8df38dd1acf"><div class="ttname"><a href="namespacestroid_1_1stats.html#ae340adbe2df53adc3946e8df38dd1acf">stroid::stats::ComputeMeshStats</a></div><div class="ttdeci">MeshStats ComputeMeshStats(const StroidMesh &amp;sm, MeshStatFeatures features=MESH_STAT_DEFAULT, int sample_order=-1)</div><div class="ttdef"><b>Definition</b> mesh_stats.cpp:20</div></div>
+</div><!-- fragment --><p>The <code>UniformRefinement(mesh, n)</code> function adds <code>n</code> levels to every current leaf while preserving the existing grading, and rebuilds the geometry and exterior coordinate. Note that this means that a non-conforming mesh that has been Uniformly refined will still be non-conforming, but the refinement will be applied to all leaves.</p>
+<h4><a class="anchor" id="autotoc_md9"></a>
+Viewing curved meshes in GLVis</h4>
+<p>It is important to note &mdash; and potentially confusing if not understood &mdash; that GLVis approximates curved faces with flat triangles. At a hanging interface, the same subdivision count on a coarse face and its finer neighbors samples the curved surface at different locations. This can produce apparent gaps even when the finite-element face transformations agree. These gaps are not indications that the mesh itself is non-conforming; rather, they are a visualization artifact.</p>
+<h3><a class="anchor" id="autotoc_md10"></a>
+C++ Interface</h3>
 <p>Stroid can be used as a library in C++ projects. After installation, include the stroid header and link against the stroid library.</p>
-<p>A basic example of using stroid in C++ is shown below (note that you will need a glvis instance running on localhost:19916 to visualize the mesh): </p><div class="fragment"><div class="line"><span class="preprocessor">#include &lt;memory&gt;</span></div>
-<div class="line"><span class="preprocessor">#include &quot;mfem.hpp&quot;</span></div>
-<div class="line"> </div>
-<div class="line"><span class="preprocessor">#include &quot;<a class="code" href="config_8h.html">stroid/config/config.h</a>&quot;</span></div>
-<div class="line"><span class="preprocessor">#include &quot;<a class="code" href="mesh_8h.html">stroid/IO/mesh.h</a>&quot;</span></div>
-<div class="line"><span class="preprocessor">#include &quot;<a class="code" href="curvilinear_8h.html">stroid/topology/curvilinear.h</a>&quot;</span></div>
-<div class="line"><span class="preprocessor">#include &quot;<a class="code" href="topology_8h.html">stroid/topology/topology.h</a>&quot;</span></div>
-<div class="line"> </div>
-<div class="line"><span class="preprocessor">#include &quot;fourdst/config/config.h&quot;</span></div>
+<p>A basic example of using stroid in C++ is shown below (note that you will need a glvis instance running on localhost:19916 to visualize the mesh): </p><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;<a class="code" href="stroid_8h.html">stroid/stroid.h</a>&quot;</span></div>
 <div class="line"> </div>
 <div class="line"><span class="keywordtype">int</span> main() {</div>
-<div class="line">    <span class="keyword">const</span> fourdst::config::Config&lt;stroid::config::MeshConfig&gt; cfg;</div>
+<div class="line">    <a class="code hl_struct" href="structstroid_1_1config_1_1_mesh_config.html">stroid::config::MeshConfig</a> cfg;</div>
+<div class="line">    cfg.<a class="code hl_variable" href="structstroid_1_1config_1_1_mesh_config.html#abb2757a2e4cbd63bb2b878ef5fccb95c">refinement_levels</a> = 4;</div>
+<div class="line">    cfg.<a class="code hl_variable" href="structstroid_1_1config_1_1_mesh_config.html#adbfd27ab0f86beedb15ecb1a2e8d92c9">vacuum_refinement_levels</a> = 2;</div>
+<div class="line">    cfg.<a class="code hl_variable" href="structstroid_1_1config_1_1_mesh_config.html#adf95ea0245d8e864c795e3c594abd19e">optimization_methods</a> = <a class="code hl_struct" href="structstroid_1_1config_1_1_optimization_methods.html">stroid::config::OptimizationMethods</a>{<span class="keyword">false</span>, <span class="keyword">true</span>};</div>
 <div class="line"> </div>
-<div class="line">    <span class="keyword">const</span> std::unique_ptr&lt;mfem::Mesh&gt; mesh = <a class="code hl_function" href="namespacestroid_1_1topology.html#abc0d8a1fb8e9c5ac0e259e4c93db7892">stroid::topology::BuildSkeleton</a>(cfg);</div>
-<div class="line">    <a class="code hl_function" href="namespacestroid_1_1topology.html#a62774bcba7ea1a485892dcd4bed6425b">stroid::topology::Finalize</a>(*mesh, cfg);</div>
-<div class="line">    <a class="code hl_function" href="namespacestroid_1_1topology.html#a5907aa2e639cda703d48d177abc37caf">stroid::topology::PromoteToHighOrder</a>(*mesh, cfg);</div>
-<div class="line">    <a class="code hl_function" href="namespacestroid_1_1topology.html#a836ed13e5bac63e7952c3ce4e5532e78">stroid::topology::ProjectMesh</a>(*mesh, cfg);</div>
-<div class="line"> </div>
-<div class="line"> </div>
-<div class="line">    <a class="code hl_function" href="namespacestroid_1_1_i_o.html#a496f5c16eaffda5922a0b96c1f525dab">stroid::IO::ViewMesh</a>(*mesh, <span class="stringliteral">&quot;Spheroidal Mesh&quot;</span>, <a class="code hl_enumvalue" href="namespacestroid_1_1_i_o.html#ad4048304d8a0c7075d2b2a6e465d0b6eaee96e14c2b71bd59252006289ba464cf">stroid::IO::VISUALIZATION_MODE::BOUNDARY_ELEMENT_ID</a>);</div>
+<div class="line">    <span class="keyword">auto</span> mesh = <a class="code hl_function" href="namespacestroid.html#a009af3074e8681e87067228deab670d6">stroid::GenerateMesh</a>(cfg);</div>
+<div class="line">    <a class="code hl_function" href="namespacestroid_1_1_i_o.html#ab854167b428c1a77597d9bb3a972b363">stroid::IO::SaveStroidMesh</a>(mesh, <span class="stringliteral">&quot;graded.stroid&quot;</span>);</div>
+<div class="line">    <a class="code hl_function" href="namespacestroid_1_1_i_o.html#a7bc6daa0f9ef8327355022363e1db3fb">stroid::IO::ViewMesh</a>(mesh, <span class="stringliteral">&quot;Spheroidal Mesh&quot;</span>, <a class="code hl_enumvalue" href="namespacestroid_1_1_i_o.html#ad4048304d8a0c7075d2b2a6e465d0b6eac31a2fe3e97d218a154c1947b43d6bbf">stroid::IO::VISUALIZATION_MODE::ELEMENT_ID</a>, <span class="stringliteral">&quot;localhost&quot;</span>, 19916);</div>
 <div class="line">}</div>
-<div class="ttc" id="aconfig_8h_html"><div class="ttname"><a href="config_8h.html">config.h</a></div></div>
-<div class="ttc" id="acurvilinear_8h_html"><div class="ttname"><a href="curvilinear_8h.html">curvilinear.h</a></div></div>
-<div class="ttc" id="amesh_8h_html"><div class="ttname"><a href="mesh_8h.html">mesh.h</a></div></div>
-<div class="ttc" id="anamespacestroid_1_1_i_o_html_a496f5c16eaffda5922a0b96c1f525dab"><div class="ttname"><a href="namespacestroid_1_1_i_o.html#a496f5c16eaffda5922a0b96c1f525dab">stroid::IO::ViewMesh</a></div><div class="ttdeci">void ViewMesh(mfem::Mesh &amp;mesh, const std::string &amp;title, VISUALIZATION_MODE mode, const std::string &amp;vishost, int visport)</div><div class="ttdoc">Stream a mesh to a running GLVis server for interactive viewing.</div><div class="ttdef"><b>Definition</b> mesh.cpp:25</div></div>
-<div class="ttc" id="anamespacestroid_1_1_i_o_html_ad4048304d8a0c7075d2b2a6e465d0b6eaee96e14c2b71bd59252006289ba464cf"><div class="ttname"><a href="namespacestroid_1_1_i_o.html#ad4048304d8a0c7075d2b2a6e465d0b6eaee96e14c2b71bd59252006289ba464cf">stroid::IO::VISUALIZATION_MODE::BOUNDARY_ELEMENT_ID</a></div><div class="ttdeci">@ BOUNDARY_ELEMENT_ID</div><div class="ttdoc">Color boundary-adjacent elements by boundary attribute/ID.</div><div class="ttdef"><b>Definition</b> mesh.h:15</div></div>
-<div class="ttc" id="anamespacestroid_1_1topology_html_a5907aa2e639cda703d48d177abc37caf"><div class="ttname"><a href="namespacestroid_1_1topology.html#a5907aa2e639cda703d48d177abc37caf">stroid::topology::PromoteToHighOrder</a></div><div class="ttdeci">void PromoteToHighOrder(mfem::Mesh &amp;mesh, const fourdst::config::Config&lt; config::MeshConfig &gt; &amp;config)</div><div class="ttdoc">Promote a mesh to high-order by attaching an H1 nodal finite element space.</div><div class="ttdef"><b>Definition</b> curvilinear.cpp:7</div></div>
-<div class="ttc" id="anamespacestroid_1_1topology_html_a62774bcba7ea1a485892dcd4bed6425b"><div class="ttname"><a href="namespacestroid_1_1topology.html#a62774bcba7ea1a485892dcd4bed6425b">stroid::topology::Finalize</a></div><div class="ttdeci">void Finalize(mfem::Mesh &amp;mesh, const fourdst::config::Config&lt; config::MeshConfig &gt; &amp;config)</div><div class="ttdoc">Finalize topology, validate orientation, and apply uniform refinement.</div><div class="ttdef"><b>Definition</b> topology.cpp:90</div></div>
-<div class="ttc" id="anamespacestroid_1_1topology_html_a836ed13e5bac63e7952c3ce4e5532e78"><div class="ttname"><a href="namespacestroid_1_1topology.html#a836ed13e5bac63e7952c3ce4e5532e78">stroid::topology::ProjectMesh</a></div><div class="ttdeci">void ProjectMesh(mfem::Mesh &amp;mesh, const fourdst::config::Config&lt; config::MeshConfig &gt; &amp;config)</div><div class="ttdoc">Project high-order mesh nodes using the configured curvilinear mapping.</div><div class="ttdef"><b>Definition</b> curvilinear.cpp:13</div></div>
-<div class="ttc" id="anamespacestroid_1_1topology_html_abc0d8a1fb8e9c5ac0e259e4c93db7892"><div class="ttname"><a href="namespacestroid_1_1topology.html#abc0d8a1fb8e9c5ac0e259e4c93db7892">stroid::topology::BuildSkeleton</a></div><div class="ttdeci">std::unique_ptr&lt; mfem::Mesh &gt; BuildSkeleton(const fourdst::config::Config&lt; config::MeshConfig &gt; &amp;config)</div><div class="ttdoc">Build the initial multi-block mesh topology for the star model.</div><div class="ttdef"><b>Definition</b> topology.cpp:10</div></div>
-<div class="ttc" id="atopology_8h_html"><div class="ttname"><a href="topology_8h.html">topology.h</a></div></div>
-</div><!-- fragment --><h1><a class="anchor" id="autotoc_md8"></a>
-Funding</h1>
+<div class="ttc" id="anamespacestroid_1_1_i_o_html_a7bc6daa0f9ef8327355022363e1db3fb"><div class="ttname"><a href="namespacestroid_1_1_i_o.html#a7bc6daa0f9ef8327355022363e1db3fb">stroid::IO::ViewMesh</a></div><div class="ttdeci">void ViewMesh(mfem::Mesh &amp;mesh, const std::string &amp;title, VISUALIZATION_MODE mode, const std::string &amp;vishost, int visport, bool conforming_display=true)</div><div class="ttdoc">Stream a mesh to a running GLVis server for interactive viewing.</div><div class="ttdef"><b>Definition</b> mesh.cpp:727</div></div>
+<div class="ttc" id="anamespacestroid_1_1_i_o_html_ad4048304d8a0c7075d2b2a6e465d0b6eac31a2fe3e97d218a154c1947b43d6bbf"><div class="ttname"><a href="namespacestroid_1_1_i_o.html#ad4048304d8a0c7075d2b2a6e465d0b6eac31a2fe3e97d218a154c1947b43d6bbf">stroid::IO::VISUALIZATION_MODE::ELEMENT_ID</a></div><div class="ttdeci">@ ELEMENT_ID</div><div class="ttdoc">Color elements by their element attribute/ID.</div><div class="ttdef"><b>Definition</b> mesh.h:19</div></div>
+<div class="ttc" id="astroid_8h_html"><div class="ttname"><a href="stroid_8h.html">stroid.h</a></div></div>
+<div class="ttc" id="astructstroid_1_1config_1_1_mesh_config_html_abb2757a2e4cbd63bb2b878ef5fccb95c"><div class="ttname"><a href="structstroid_1_1config_1_1_mesh_config.html#abb2757a2e4cbd63bb2b878ef5fccb95c">stroid::config::MeshConfig::refinement_levels</a></div><div class="ttdeci">std::optional&lt; int &gt; refinement_levels</div><div class="ttdoc">Stellar refinement depth, or uniform depth when vacuum overrides are absent.</div><div class="ttdef"><b>Definition</b> config.h:31</div></div>
+<div class="ttc" id="astructstroid_1_1config_1_1_mesh_config_html_adbfd27ab0f86beedb15ecb1a2e8d92c9"><div class="ttname"><a href="structstroid_1_1config_1_1_mesh_config.html#adbfd27ab0f86beedb15ecb1a2e8d92c9">stroid::config::MeshConfig::vacuum_refinement_levels</a></div><div class="ttdeci">std::optional&lt; int &gt; vacuum_refinement_levels</div><div class="ttdoc">Minimum refinement depth in the vacuum interior; unset inherits refinement_levels.</div><div class="ttdef"><b>Definition</b> config.h:41</div></div>
+<div class="ttc" id="astructstroid_1_1config_1_1_mesh_config_html_adf95ea0245d8e864c795e3c594abd19e"><div class="ttname"><a href="structstroid_1_1config_1_1_mesh_config.html#adf95ea0245d8e864c795e3c594abd19e">stroid::config::MeshConfig::optimization_methods</a></div><div class="ttdeci">std::optional&lt; OptimizationMethods &gt; optimization_methods</div><div class="ttdef"><b>Definition</b> config.h:145</div></div>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md11"></a>
+Example Meshes</h2>
+<p>An example mesh with the default configuration parameters is shown below (coloration indicates attribute IDs of different regions): <img src="assets/imgs/ExampleMesh_multi-block.png" alt="Example Mesh" class="inline"/></p>
+<p>The legacy spherified core mapping strategy is shown below as well <img src="assets/imgs/ExampleMesh_spherified.png" alt="Example Spheried Mesh" class="inline"/></p>
+<p>An example of a non-conforming mesh generated with stroid. Note that the gaps between elements are a visualization artifact rather than true gaps within the mesh. <img src="assets/imgs/ExampleMesh_NC.png" alt="Non Conforming Mesh" class="inline"/></p>
+<p>Note that both of these meshes are shown with 3 levels of refinement and polynomial order 3. Blue shows the core domain, yellow shows the envelope domain, while purple shows the vacuum domain.</p>
+<h2><a class="anchor" id="autotoc_md12"></a>
+Funding</h2>
 <p>Stroid is developed as part of the 4D-STAR project.</p>
 <p>4D-STAR is funded by European Research Council (ERC) under the Horizon Europe programme (Synergy Grant agreement No. 101071505: 4D-STAR) Work for this project is funded by the European Union. Views and opinions expressed are however those of the author(s) only and do not necessarily reflect those of the European Union or the European Research Council. </p>
 </div></div><!-- PageDoc -->

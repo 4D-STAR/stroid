@@ -1,5 +1,31 @@
 var searchData=
 [
-  ['element_5fid_0',['ELEMENT_ID',['../namespacestroid_1_1_i_o.html#ad4048304d8a0c7075d2b2a6e465d0b6eac31a2fe3e97d218a154c1947b43d6bbf',1,'stroid::IO']]],
-  ['envelope_5fid_1',['envelope_id',['../structstroid_1_1config_1_1_mesh_config.html#ac99aa48fe3e71e2ef57b09d48cacfef8',1,'stroid::config::MeshConfig']]]
+  ['c_20interface_0',['C++ Interface',['../index.html#autotoc_md10',1,'']]],
+  ['centroid_1',['CENTROID',['../namespacestroid_1_1stats.html#a10596f3f5de79404d640278d55bded0ba04597115f4cfe4f00ab913b138f9737c',1,'stroid::stats']]],
+  ['centroid_2',['centroid',['../structstroid_1_1stats_1_1_mesh_stats.html#acf33442992a504e38b25586c3e07ca28',1,'stroid::stats::MeshStats']]],
+  ['centroidstats_3',['CentroidStats',['../structstroid_1_1stats_1_1_centroid_stats.html',1,'stroid::stats']]],
+  ['clone_4',['clone',['../structstroid_1_1_stroid_mesh.html#a69857c53a09211c3534f02546b3302f3',1,'stroid::StroidMesh']]],
+  ['computed_5',['computed',['../structstroid_1_1stats_1_1_mesh_stats.html#abf86b5cd38826062b0a1a493e7e65da4',1,'stroid::stats::MeshStats']]],
+  ['computeexteriorcoordinate_6',['ComputeExteriorCoordinate',['../namespacestroid_1_1topology.html#a11783fac833cd43c7c59d712912795a8',1,'stroid::topology']]],
+  ['computemeshstats_7',['ComputeMeshStats',['../namespacestroid_1_1stats.html#ae340adbe2df53adc3946e8df38dd1acf',1,'stroid::stats']]],
+  ['conditioned_20core_20mapping_8',['Conditioned core mapping',['../index.html#autotoc_md7',1,'']]],
+  ['config_9',['config',['../structstroid_1_1_stroid_mesh.html#a3dd1a14571aa04ca0cc3d26575f59238',1,'stroid::StroidMesh']]],
+  ['config_2eh_10',['config.h',['../config_8h.html',1,'']]],
+  ['config_5fmeta_11',['CONFIG_META',['../namespacestroid_1_1stats.html#a10596f3f5de79404d640278d55bded0baa17731be24258d84478f18a2fd8f1375',1,'stroid::stats']]],
+  ['config_5fmeta_12',['config_meta',['../structstroid_1_1stats_1_1_mesh_stats.html#a826463bf69a79deb5f556fda6180c0d7',1,'stroid::stats::MeshStats']]],
+  ['configmeta_13',['ConfigMeta',['../structstroid_1_1stats_1_1_config_meta.html',1,'stroid::stats']]],
+  ['configuration_20file_14',['Configuration File',['../index.html#autotoc_md6',1,'']]],
+  ['conforming_15',['conforming',['../structstroid_1_1stats_1_1_conformity_stats.html#affd2ab3b52411cf4e7d3a3d4f9b331bb',1,'stroid::stats::ConformityStats']]],
+  ['conformity_16',['CONFORMITY',['../namespacestroid_1_1stats.html#a10596f3f5de79404d640278d55bded0bad038f7f4555c488a5005db9e2f0443df',1,'stroid::stats']]],
+  ['conformity_17',['conformity',['../structstroid_1_1stats_1_1_mesh_stats.html#ad13cc0c6a5b223ace653825355660bdd',1,'stroid::stats::MeshStats']]],
+  ['conformitystats_18',['ConformityStats',['../structstroid_1_1stats_1_1_conformity_stats.html',1,'stroid::stats']]],
+  ['continuity_5forder_19',['continuity_order',['../structstroid_1_1config_1_1_mesh_config.html#ae8bf54f7fd649578d44e46e96f501e34',1,'stroid::config::MeshConfig']]],
+  ['core_20',['core',['../structstroid_1_1stats_1_1_refinement_stats.html#aa1bd1a7c712813ab7913defe74bc9e13',1,'stroid::stats::RefinementStats::core'],['../structstroid_1_1stats_1_1_element_counts.html#adf8ca94d0323409da0a8e6dd7a09b43d',1,'stroid::stats::ElementCounts::core'],['../structstroid_1_1stats_1_1_bounding_box_stats.html#ae3dcc95d73affc02d81e91f6dcbd5757',1,'stroid::stats::BoundingBoxStats::core']]],
+  ['core_20mapping_21',['Conditioned core mapping',['../index.html#autotoc_md7',1,'']]],
+  ['core_5fid_22',['core_id',['../structstroid_1_1config_1_1_mesh_config.html#ad6af127dd2bdcba58dd64eee24378dbe',1,'stroid::config::MeshConfig']]],
+  ['core_5fmapping_23',['core_mapping',['../structstroid_1_1config_1_1_mesh_config.html#a932e1257cacf5831c216bc3c48d4346d',1,'stroid::config::MeshConfig']]],
+  ['core_5fsteepness_24',['core_steepness',['../structstroid_1_1config_1_1_mesh_config.html#aae33c48f949858944a6baa6033cebb7b',1,'stroid::config::MeshConfig']]],
+  ['curved_20meshes_20in_20glvis_25',['Viewing curved meshes in GLVis',['../index.html#autotoc_md9',1,'']]],
+  ['curvilinear_2ecpp_26',['curvilinear.cpp',['../curvilinear_8cpp.html',1,'']]],
+  ['curvilinear_2eh_27',['curvilinear.h',['../curvilinear_8h.html',1,'']]]
 ];

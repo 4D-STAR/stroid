@@ -15,9 +15,11 @@ namespace stroid::topology {
      */
     std::unique_ptr<mfem::Mesh> BuildSkeleton(const fourdst::config::Config<config::MeshConfig> & config);
     /**
-     * @brief Finalize topology, validate orientation, and apply uniform refinement.
+     * @brief Finalize topology, validate orientation, and apply the configured refinement policy.
      * @param mesh Mesh to finalize in-place.
-     * @param config Mesh configuration (uses `refinement_levels`).
+     * @param config Mesh configuration. Vacuum refinement overrides enable a
+     * balanced hierarchy with fine layers at both vacuum boundaries and a
+     * conforming stellar interface. Without overrides, refinement is uniform.
      */
     void Finalize(mfem::Mesh& mesh, const fourdst::config::Config<config::MeshConfig> &config);
 }

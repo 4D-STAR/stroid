@@ -31,7 +31,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="Logo.png"/></td>
   <td id="projectalign">
-   <div id="projectname">stroid<span id="projectnumber">&#160;v0.2.1</span>
+   <div id="projectname">stroid<span id="projectnumber">&#160;v0.6.0</span>
    </div>
    <div id="projectbrief">Multi-block curvilinear mesh generation</div>
   </td>
@@ -110,17 +110,20 @@ $(function(){initNavTree('mesh__utils_8cpp.html',''); initResizable(true); });
 <div class="textblock"><code>#include &quot;<a class="el" href="mesh__utils_8h.html">stroid/utils/mesh_utils.h</a>&quot;</code><br />
 <code>#include &quot;mfem.hpp&quot;</code><br />
 <code>#include &lt;print&gt;</code><br />
+<code>#include &quot;<a class="el" href="curvilinear_8h.html">stroid/topology/curvilinear.h</a>&quot;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for mesh_utils.cpp:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="mesh__utils_8cpp__incl.svg" width="291" height="199"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="mesh__utils_8cpp__incl.svg" width="100%" height="560"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
 </div>
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
 Namespaces</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacestroid.html">stroid</a></td></tr>
+<tr class="memdesc:namespacestroid"><td class="mdescLeft">&#160;</td><td class="mdescRight">Public API surface for the stroid mesh generation library. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacestroid_1_1utils.html">stroid::utils</a></td></tr>
+<tr class="memdesc:namespacestroid_1_1utils"><td class="mdescLeft">&#160;</td><td class="mdescRight">Mesh inspection and validation utilities. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
@@ -131,6 +134,10 @@ Functions</h2></td></tr>
 <tr class="memitem:ae047d97d7d5dc12812395909d00f5bbe" id="r_ae047d97d7d5dc12812395909d00f5bbe"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacestroid_1_1utils.html#ae047d97d7d5dc12812395909d00f5bbe">stroid::utils::MarkFlippedBoundaryElements</a> (mfem::Mesh &amp;mesh)</td></tr>
 <tr class="memdesc:ae047d97d7d5dc12812395909d00f5bbe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Mark boundary elements whose outward normal orientation is flipped.  <br /></td></tr>
 <tr class="separator:ae047d97d7d5dc12812395909d00f5bbe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad6d849312ba094bda29ab3adf2326435" id="r_ad6d849312ba094bda29ab3adf2326435"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacestroid_1_1utils.html#ad6d849312ba094bda29ab3adf2326435">stroid::utils::ExportJacobianRadialProfile</a> (mfem::Mesh &amp;mesh, const std::string &amp;filename)</td></tr>
+<tr class="separator:ad6d849312ba094bda29ab3adf2326435"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa81cc28e65c9208a29a6aa9c51ba5126" id="r_aa81cc28e65c9208a29a6aa9c51ba5126"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; mfem::Mesh &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacestroid_1_1utils.html#aa81cc28e65c9208a29a6aa9c51ba5126">stroid::utils::BuildProjected</a> (const mfem::Mesh &amp;reference, const fourdst::config::Config&lt; <a class="el" href="structstroid_1_1config_1_1_mesh_config.html">config::MeshConfig</a> &gt; &amp;cfg)</td></tr>
+<tr class="separator:aa81cc28e65c9208a29a6aa9c51ba5126"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 </div><!-- contents -->
 </div><!-- doc-content -->

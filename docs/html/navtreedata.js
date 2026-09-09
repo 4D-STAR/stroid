@@ -25,41 +25,57 @@
 var NAVTREE =
 [
   [ "stroid", "index.html", [
-    [ "A multi-block mesh generation tool for stellar modeling", "index.html#autotoc_md1", null ],
-    [ "Building and Installing", "index.html#autotoc_md2", [
-      [ "Building", "index.html#autotoc_md3", [
-        [ "Uninstalling", "index.html#autotoc_md4", null ]
+    [ "Stroid", "index.html#autotoc_md0", [
+      [ "A multi-block mesh generation tool for stellar modeling", "index.html#autotoc_md1", null ],
+      [ "Building and Installing", "index.html#autotoc_md2", [
+        [ "Building", "index.html#autotoc_md3", [
+          [ "Uninstalling", "index.html#autotoc_md4", null ]
+        ] ],
+        [ "Running", "index.html#autotoc_md5", null ],
+        [ "Configuration File", "index.html#autotoc_md6", null ],
+        [ "Conditioned core mapping", "index.html#autotoc_md7", null ],
+        [ "Nonconforming vacuum refinement", "index.html#autotoc_md8", [
+          [ "Viewing curved meshes in GLVis", "index.html#autotoc_md9", null ]
+        ] ],
+        [ "C++ Interface", "index.html#autotoc_md10", null ]
       ] ],
-      [ "Running", "index.html#autotoc_md5", null ],
-      [ "Configuration File", "index.html#autotoc_md6", null ],
-      [ "C++ Interface", "index.html#autotoc_md7", null ]
+      [ "Example Meshes", "index.html#autotoc_md11", null ],
+      [ "Funding", "index.html#autotoc_md12", null ]
     ] ],
-    [ "Funding", "index.html#autotoc_md8", null ],
     [ "Namespaces", "namespaces.html", [
       [ "Namespace List", "namespaces.html", "namespaces_dup" ],
       [ "Namespace Members", "namespacemembers.html", [
         [ "All", "namespacemembers.html", null ],
         [ "Functions", "namespacemembers_func.html", null ],
+        [ "Variables", "namespacemembers_vars.html", null ],
         [ "Enumerations", "namespacemembers_enum.html", null ]
       ] ]
     ] ],
     [ "Classes", "annotated.html", [
       [ "Class List", "annotated.html", "annotated_dup" ],
       [ "Class Index", "classes.html", null ],
+      [ "Class Hierarchy", "hierarchy.html", "hierarchy" ],
       [ "Class Members", "functions.html", [
         [ "All", "functions.html", null ],
+        [ "Functions", "functions_func.html", null ],
         [ "Variables", "functions_vars.html", null ]
       ] ]
     ] ],
     [ "Files", "files.html", [
-      [ "File List", "files.html", "files_dup" ]
+      [ "File List", "files.html", "files_dup" ],
+      [ "File Members", "globals.html", [
+        [ "All", "globals.html", null ],
+        [ "Functions", "globals_func.html", null ]
+      ] ]
     ] ]
   ] ]
 ];
 
 var NAVTREEINDEX =
 [
-"_logo_8png.html"
+"____init_____8py.html",
+"structstroid_1_1config_1_1_mesh_config.html",
+"structstroid_1_1stats_1_1_refinement_stats.html#aef469d52ee5d4b95baadfa785bd3e492"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronization';

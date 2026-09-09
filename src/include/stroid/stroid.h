@@ -49,7 +49,11 @@
  * @endcode
  */
 namespace stroid {
-    inline StroidMesh GenerateMesh(const fourdst::config::Config<stroid::config::MeshConfig>& cfg) {
+    inline StroidMesh GenerateMesh(const fourdst::config::Config<stroid::config::MeshConfig>& input) {
+        fourdst::config::Config<config::MeshConfig> cfg;
+        cfg.mutate([&input](config::MeshConfig& value) {
+            value = config::ResolveDefaults(*input);
+        });
         StroidMesh sm;
         sm.type = MFEM_MESH_TYPE::SERIAL;
         sm.config = *cfg;
@@ -59,9 +63,7 @@ namespace stroid {
 
         sm.reference_mesh = std::move(reference);
         sm.mesh = utils::BuildProjected(*sm.reference_mesh, cfg);
-        if (cfg->optimization_methods.has_value() && cfg->optimization_methods.value().tmop.has_value() && cfg->optimization_methods.value().tmop.value()) {
-            stroid::topology::ApplyTMOP(*sm.mesh, cfg);
-        }
+        stroid::topology::OptimizeMesh(*sm.mesh, cfg);
         sm.exterior_coordinate = stroid::topology::BuildExteriorCoordinate(*sm.mesh, *sm.reference_mesh, cfg);
         return sm;
     }

@@ -31,7 +31,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="Logo.png"/></td>
   <td id="projectalign">
-   <div id="projectname">stroid<span id="projectnumber">&#160;v0.2.1</span>
+   <div id="projectname">stroid<span id="projectnumber">&#160;v0.6.0</span>
    </div>
    <div id="projectbrief">Multi-block curvilinear mesh generation</div>
   </td>
@@ -107,6 +107,9 @@ $(function(){initNavTree('namespacestroid_1_1_i_o.html',''); initResizable(true)
   <div class="headertitle"><div class="title">stroid::IO Namespace Reference</div></div>
 </div><!--header-->
 <div class="contents">
+
+<p>Mesh serialization and visualization helpers.  
+<a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
 Enumerations</h2></td></tr>
@@ -119,20 +122,41 @@ Enumerations</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
+<tr class="memitem:ab854167b428c1a77597d9bb3a972b363" id="r_ab854167b428c1a77597d9bb3a972b363"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab854167b428c1a77597d9bb3a972b363">SaveStroidMesh</a> (const <a class="el" href="structstroid_1_1_stroid_mesh.html">StroidMesh</a> &amp;mesh, const std::string &amp;filename, const std::string &amp;comment=&quot;&quot;)</td></tr>
+<tr class="separator:ab854167b428c1a77597d9bb3a972b363"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aeb567ddc70ff2d064c139dee87575830" id="r_aeb567ddc70ff2d064c139dee87575830"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aeb567ddc70ff2d064c139dee87575830">SaveMesh</a> (const mfem::Mesh &amp;mesh, const std::string &amp;filename)</td></tr>
 <tr class="memdesc:aeb567ddc70ff2d064c139dee87575830"><td class="mdescLeft">&#160;</td><td class="mdescRight">Save a mesh to MFEM's native <code>.mesh</code> format.  <br /></td></tr>
 <tr class="separator:aeb567ddc70ff2d064c139dee87575830"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad7721ff3eda0ad42365955ea33da2b0a" id="r_ad7721ff3eda0ad42365955ea33da2b0a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad7721ff3eda0ad42365955ea33da2b0a">SaveMesh</a> (const <a class="el" href="structstroid_1_1_stroid_mesh.html">stroid::StroidMesh</a> &amp;mesh, const std::string &amp;filename)</td></tr>
+<tr class="memdesc:ad7721ff3eda0ad42365955ea33da2b0a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Overload of SaveMesh which accepts a <a class="el" href="structstroid_1_1_stroid_mesh.html">StroidMesh</a> type and will internally unpack it.  <br /></td></tr>
+<tr class="separator:ad7721ff3eda0ad42365955ea33da2b0a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab4c8bda7ab370e34376a7832fbf0951e" id="r_ab4c8bda7ab370e34376a7832fbf0951e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab4c8bda7ab370e34376a7832fbf0951e">SaveVTU</a> (mfem::Mesh &amp;mesh, const std::string &amp;exportName)</td></tr>
 <tr class="memdesc:ab4c8bda7ab370e34376a7832fbf0951e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Save a mesh as a ParaView VTU dataset.  <br /></td></tr>
 <tr class="separator:ab4c8bda7ab370e34376a7832fbf0951e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a496f5c16eaffda5922a0b96c1f525dab" id="r_a496f5c16eaffda5922a0b96c1f525dab"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a496f5c16eaffda5922a0b96c1f525dab">ViewMesh</a> (mfem::Mesh &amp;mesh, const std::string &amp;title, <a class="el" href="#ad4048304d8a0c7075d2b2a6e465d0b6e">VISUALIZATION_MODE</a> mode, const std::string &amp;vishost, int visport)</td></tr>
-<tr class="memdesc:a496f5c16eaffda5922a0b96c1f525dab"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stream a mesh to a running GLVis server for interactive viewing.  <br /></td></tr>
-<tr class="separator:a496f5c16eaffda5922a0b96c1f525dab"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8100e130b3a49fdee48bc3c4d4e63963" id="r_a8100e130b3a49fdee48bc3c4d4e63963"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8100e130b3a49fdee48bc3c4d4e63963">VisualizeFaceValence</a> (mfem::Mesh &amp;mesh)</td></tr>
-<tr class="memdesc:a8100e130b3a49fdee48bc3c4d4e63963"><td class="mdescLeft">&#160;</td><td class="mdescRight">Visualize boundary face valence (1=surface, 2=internal).  <br /></td></tr>
-<tr class="separator:a8100e130b3a49fdee48bc3c4d4e63963"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae0fc8e0663da26ff11be71fb1b5a0b0e" id="r_ae0fc8e0663da26ff11be71fb1b5a0b0e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae0fc8e0663da26ff11be71fb1b5a0b0e">SaveVTU</a> (const <a class="el" href="structstroid_1_1_stroid_mesh.html">stroid::StroidMesh</a> &amp;mesh, const std::string &amp;exportName)</td></tr>
+<tr class="memdesc:ae0fc8e0663da26ff11be71fb1b5a0b0e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Overload of SaveVTU which accepts a <a class="el" href="structstroid_1_1_stroid_mesh.html">StroidMesh</a> type and will internally unpack it.  <br /></td></tr>
+<tr class="separator:ae0fc8e0663da26ff11be71fb1b5a0b0e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7426b1e664be45cbf791167748d4feb8" id="r_a7426b1e664be45cbf791167748d4feb8"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; mfem::Mesh &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7426b1e664be45cbf791167748d4feb8">MakeConformingVisualizationMesh</a> (const mfem::Mesh &amp;mesh)</td></tr>
+<tr class="memdesc:a7426b1e664be45cbf791167748d4feb8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Make a display-only mesh copy with matching face subdivisions. This is purely for visualization and should not be used for any science goals.  <br /></td></tr>
+<tr class="separator:a7426b1e664be45cbf791167748d4feb8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7bc6daa0f9ef8327355022363e1db3fb" id="r_a7bc6daa0f9ef8327355022363e1db3fb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7bc6daa0f9ef8327355022363e1db3fb">ViewMesh</a> (mfem::Mesh &amp;mesh, const std::string &amp;title, <a class="el" href="#ad4048304d8a0c7075d2b2a6e465d0b6e">VISUALIZATION_MODE</a> mode, const std::string &amp;vishost, int visport, bool conforming_display=true)</td></tr>
+<tr class="memdesc:a7bc6daa0f9ef8327355022363e1db3fb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stream a mesh to a running GLVis server for interactive viewing.  <br /></td></tr>
+<tr class="separator:a7bc6daa0f9ef8327355022363e1db3fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6491a99d6d2859b2c098b94f2f8171d3" id="r_a6491a99d6d2859b2c098b94f2f8171d3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6491a99d6d2859b2c098b94f2f8171d3">ViewMesh</a> (const <a class="el" href="structstroid_1_1_stroid_mesh.html">stroid::StroidMesh</a> &amp;mesh, const std::string &amp;title, <a class="el" href="#ad4048304d8a0c7075d2b2a6e465d0b6e">VISUALIZATION_MODE</a> mode, const std::string &amp;vishost, int visport, bool conforming_display=true)</td></tr>
+<tr class="separator:a6491a99d6d2859b2c098b94f2f8171d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a516d260163e0b6ac000b301b0b8cf4bb" id="r_a516d260163e0b6ac000b301b0b8cf4bb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a516d260163e0b6ac000b301b0b8cf4bb">VisualizeFaceValence</a> (mfem::Mesh &amp;mesh, const std::string &amp;vishost, int visport, bool conforming_display=true)</td></tr>
+<tr class="memdesc:a516d260163e0b6ac000b301b0b8cf4bb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Color boundary-adjacent elements by face valence (1=surface, 2=internal). Untagged elements are zero; elements touching several tagged faces use the maximum valence. Values are computed before display subdivision.  <br /></td></tr>
+<tr class="separator:a516d260163e0b6ac000b301b0b8cf4bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a26155a525b34257a3eb2305e477b6bef" id="r_a26155a525b34257a3eb2305e477b6bef"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a26155a525b34257a3eb2305e477b6bef">VisualizeFaceValence</a> (const <a class="el" href="structstroid_1_1_stroid_mesh.html">stroid::StroidMesh</a> &amp;mesh, const std::string &amp;vishost, int visport, bool conforming_display=true)</td></tr>
+<tr class="separator:a26155a525b34257a3eb2305e477b6bef"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a20ae517986b9c27d23ef5f0ab704b247" id="r_a20ae517986b9c27d23ef5f0ab704b247"><td class="memItemLeft" align="right" valign="top">std::expected&lt; <a class="el" href="structstroid_1_1_stroid_mesh.html">StroidMesh</a>, std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a20ae517986b9c27d23ef5f0ab704b247">ParseStroidMesh</a> (std::istream &amp;is)</td></tr>
+<tr class="separator:a20ae517986b9c27d23ef5f0ab704b247"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3f39dc149d5650468b579c76d00f991d" id="r_a3f39dc149d5650468b579c76d00f991d"><td class="memItemLeft" align="right" valign="top">std::expected&lt; <a class="el" href="structstroid_1_1_stroid_mesh.html">StroidMesh</a>, std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3f39dc149d5650468b579c76d00f991d">LoadStroidMesh</a> (const std::string &amp;filename)</td></tr>
+<tr class="separator:a3f39dc149d5650468b579c76d00f991d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Enumeration Type Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Mesh serialization and visualization helpers. </p>
+</div><h2 class="groupheader">Enumeration Type Documentation</h2>
 <a id="ad4048304d8a0c7075d2b2a6e465d0b6e" name="ad4048304d8a0c7075d2b2a6e465d0b6e"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ad4048304d8a0c7075d2b2a6e465d0b6e">&#9670;&#160;</a></span>VISUALIZATION_MODE</h2>
 
@@ -166,8 +190,68 @@ Functions</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Function Documentation</h2>
+<a id="a3f39dc149d5650468b579c76d00f991d" name="a3f39dc149d5650468b579c76d00f991d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3f39dc149d5650468b579c76d00f991d">&#9670;&#160;</a></span>LoadStroidMesh()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::expected&lt; <a class="el" href="structstroid_1_1_stroid_mesh.html">StroidMesh</a>, std::string &gt; stroid::IO::LoadStroidMesh </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>filename</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a7426b1e664be45cbf791167748d4feb8" name="a7426b1e664be45cbf791167748d4feb8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7426b1e664be45cbf791167748d4feb8">&#9670;&#160;</a></span>MakeConformingVisualizationMesh()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::unique_ptr&lt; mfem::Mesh &gt; stroid::IO::MakeConformingVisualizationMesh </td>
+          <td>(</td>
+          <td class="paramtype">const mfem::Mesh &amp;</td>          <td class="paramname"><span class="paramname"><em>mesh</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Make a display-only mesh copy with matching face subdivisions. This is purely for visualization and should not be used for any science goals. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">mesh</td><td>Source mesh whose geometry is to be displayed. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Independently owned copy with no hanging faces. </dd></dl>
+
+</div>
+</div>
+<a id="a20ae517986b9c27d23ef5f0ab704b247" name="a20ae517986b9c27d23ef5f0ab704b247"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a20ae517986b9c27d23ef5f0ab704b247">&#9670;&#160;</a></span>ParseStroidMesh()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::expected&lt; <a class="el" href="structstroid_1_1_stroid_mesh.html">StroidMesh</a>, std::string &gt; stroid::IO::ParseStroidMesh </td>
+          <td>(</td>
+          <td class="paramtype">std::istream &amp;</td>          <td class="paramname"><span class="paramname"><em>is</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="aeb567ddc70ff2d064c139dee87575830" name="aeb567ddc70ff2d064c139dee87575830"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aeb567ddc70ff2d064c139dee87575830">&#9670;&#160;</a></span>SaveMesh()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#aeb567ddc70ff2d064c139dee87575830">&#9670;&#160;</a></span>SaveMesh() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -196,8 +280,96 @@ Functions</h2></td></tr>
 
 </div>
 </div>
+<a id="ad7721ff3eda0ad42365955ea33da2b0a" name="ad7721ff3eda0ad42365955ea33da2b0a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad7721ff3eda0ad42365955ea33da2b0a">&#9670;&#160;</a></span>SaveMesh() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void stroid::IO::SaveMesh </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structstroid_1_1_stroid_mesh.html">stroid::StroidMesh</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>mesh</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>filename</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Overload of SaveMesh which accepts a <a class="el" href="structstroid_1_1_stroid_mesh.html">StroidMesh</a> type and will internally unpack it. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">mesh</td><td><a class="el" href="structstroid_1_1_stroid_mesh.html">StroidMesh</a> to serialize. </td></tr>
+    <tr><td class="paramname">filename</td><td>Path to save to</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section note"><dt>Note</dt><dd>This function is a utility wrapper to save a <a class="el" href="structstroid_1_1_stroid_mesh.html">StroidMesh</a> object in MFEM's native .mesh format. Data other than the mesh pointer in <a class="el" href="structstroid_1_1_stroid_mesh.html">StroidMesh</a> <b>will not be saved</b> (e.g. the reference mesh, the number of refinement levels, etc..). If you need to serialize an entire <a class="el" href="structstroid_1_1_stroid_mesh.html">StroidMesh</a> then please use the <a class="el" href="#ab854167b428c1a77597d9bb3a972b363">stroid::IO::SaveStroidMesh</a> function </dd></dl>
+
+</div>
+</div>
+<a id="ab854167b428c1a77597d9bb3a972b363" name="ab854167b428c1a77597d9bb3a972b363"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab854167b428c1a77597d9bb3a972b363">&#9670;&#160;</a></span>SaveStroidMesh()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void stroid::IO::SaveStroidMesh </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structstroid_1_1_stroid_mesh.html">StroidMesh</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>mesh</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>filename</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>comment</em></span><span class="paramdefsep"> = </span><span class="paramdefval">&quot;&quot;</span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ae0fc8e0663da26ff11be71fb1b5a0b0e" name="ae0fc8e0663da26ff11be71fb1b5a0b0e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae0fc8e0663da26ff11be71fb1b5a0b0e">&#9670;&#160;</a></span>SaveVTU() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void stroid::IO::SaveVTU </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structstroid_1_1_stroid_mesh.html">stroid::StroidMesh</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>mesh</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>exportName</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Overload of SaveVTU which accepts a <a class="el" href="structstroid_1_1_stroid_mesh.html">StroidMesh</a> type and will internally unpack it. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">mesh</td><td><a class="el" href="structstroid_1_1_stroid_mesh.html">StroidMesh</a> to serialize. </td></tr>
+    <tr><td class="paramname">filename</td><td>Path to save to</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section note"><dt>Note</dt><dd>This function is a utility wrapper to save a <a class="el" href="structstroid_1_1_stroid_mesh.html">StroidMesh</a> object in MFEM's native .mesh format. Data other than the mesh pointer in <a class="el" href="structstroid_1_1_stroid_mesh.html">StroidMesh</a> <b>will not be saved</b> (e.g. the reference mesh, the number of refinement levels, etc..). If you need to serialize an entire <a class="el" href="structstroid_1_1_stroid_mesh.html">StroidMesh</a> then please use the stroid::IO::SaveStroidVTU function </dd></dl>
+
+</div>
+</div>
 <a id="ab4c8bda7ab370e34376a7832fbf0951e" name="ab4c8bda7ab370e34376a7832fbf0951e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab4c8bda7ab370e34376a7832fbf0951e">&#9670;&#160;</a></span>SaveVTU()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ab4c8bda7ab370e34376a7832fbf0951e">&#9670;&#160;</a></span>SaveVTU() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -226,8 +398,49 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a496f5c16eaffda5922a0b96c1f525dab" name="a496f5c16eaffda5922a0b96c1f525dab"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a496f5c16eaffda5922a0b96c1f525dab">&#9670;&#160;</a></span>ViewMesh()</h2>
+<a id="a6491a99d6d2859b2c098b94f2f8171d3" name="a6491a99d6d2859b2c098b94f2f8171d3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6491a99d6d2859b2c098b94f2f8171d3">&#9670;&#160;</a></span>ViewMesh() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void stroid::IO::ViewMesh </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structstroid_1_1_stroid_mesh.html">stroid::StroidMesh</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>mesh</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>title</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="#ad4048304d8a0c7075d2b2a6e465d0b6e">VISUALIZATION_MODE</a></td>          <td class="paramname"><span class="paramname"><em>mode</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>vishost</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>visport</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>conforming_display</em></span><span class="paramdefsep"> = </span><span class="paramdefval">true</span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a7bc6daa0f9ef8327355022363e1db3fb" name="a7bc6daa0f9ef8327355022363e1db3fb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7bc6daa0f9ef8327355022363e1db3fb">&#9670;&#160;</a></span>ViewMesh() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -255,7 +468,12 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>visport</em></span>&#160;)</td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>visport</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>conforming_display</em></span><span class="paramdefsep"> = </span><span class="paramdefval">true</span>&#160;)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -268,14 +486,15 @@ Functions</h2></td></tr>
     <tr><td class="paramname">mode</td><td>Attribute visualization mode. </td></tr>
     <tr><td class="paramname">vishost</td><td>GLVis server host. </td></tr>
     <tr><td class="paramname">visport</td><td>GLVis server port. </td></tr>
+    <tr><td class="paramname">conforming_display</td><td>Refine a display-only copy at hanging interfaces to prevent GLVis tessellation gaps. Set false to inspect the original element layout, which can show rendering gaps on curved interfaces. </td></tr>
   </table>
   </dd>
 </dl>
 
 </div>
 </div>
-<a id="a8100e130b3a49fdee48bc3c4d4e63963" name="a8100e130b3a49fdee48bc3c4d4e63963"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8100e130b3a49fdee48bc3c4d4e63963">&#9670;&#160;</a></span>VisualizeFaceValence()</h2>
+<a id="a26155a525b34257a3eb2305e477b6bef" name="a26155a525b34257a3eb2305e477b6bef"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a26155a525b34257a3eb2305e477b6bef">&#9670;&#160;</a></span>VisualizeFaceValence() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -283,16 +502,64 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">void stroid::IO::VisualizeFaceValence </td>
           <td>(</td>
-          <td class="paramtype">mfem::Mesh &amp;</td>          <td class="paramname"><span class="paramname"><em>mesh</em></span></td><td>)</td>
+          <td class="paramtype">const <a class="el" href="structstroid_1_1_stroid_mesh.html">stroid::StroidMesh</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>mesh</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>vishost</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>visport</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>conforming_display</em></span><span class="paramdefsep"> = </span><span class="paramdefval">true</span>&#160;)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Visualize boundary face valence (1=surface, 2=internal). </p>
+</div>
+</div>
+<a id="a516d260163e0b6ac000b301b0b8cf4bb" name="a516d260163e0b6ac000b301b0b8cf4bb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a516d260163e0b6ac000b301b0b8cf4bb">&#9670;&#160;</a></span>VisualizeFaceValence() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void stroid::IO::VisualizeFaceValence </td>
+          <td>(</td>
+          <td class="paramtype">mfem::Mesh &amp;</td>          <td class="paramname"><span class="paramname"><em>mesh</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>vishost</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>visport</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>conforming_display</em></span><span class="paramdefsep"> = </span><span class="paramdefval">true</span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Color boundary-adjacent elements by face valence (1=surface, 2=internal). Untagged elements are zero; elements touching several tagged faces use the maximum valence. Values are computed before display subdivision. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">mesh</td><td>Mesh whose boundary faces are inspected. </td></tr>
+    <tr><td class="paramname">vishost</td><td>GLVis server host. </td></tr>
+    <tr><td class="paramname">visport</td><td>GLVis server port. </td></tr>
+    <tr><td class="paramname">conforming_display</td><td>Use the same display-only refinement as ViewMesh. </td></tr>
   </table>
   </dd>
 </dl>

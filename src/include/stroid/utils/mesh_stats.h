@@ -25,6 +25,7 @@ namespace stroid::stats {
         CENTROID             = 1u << 10,
         CONFIG_META          = 1u << 11,
         BOUNDING_BOX         = 1u << 12,
+        REFINEMENT           = 1u << 13,
     };
 
     constexpr MeshStatFeatures operator|(MeshStatFeatures lhs, MeshStatFeatures rhs) {
@@ -41,7 +42,7 @@ namespace stroid::stats {
 
     inline constexpr MeshStatFeatures MESH_STAT_DEFAULT =
         MeshStatFeatures::RADIUS | MeshStatFeatures::AXES | MeshStatFeatures::ELLIPTICITY |
-        MeshStatFeatures::CONFORMITY | MeshStatFeatures::CONFIG_META;
+        MeshStatFeatures::CONFORMITY | MeshStatFeatures::CONFIG_META | MeshStatFeatures::REFINEMENT;
 
     inline constexpr auto MESH_STAT_ALL = static_cast<MeshStatFeatures>(0xFFFFFFFFu);
 
@@ -70,7 +71,25 @@ namespace stroid::stats {
 
     struct ConformityStats {
         bool conforming = true;
+        bool hierarchy_enabled = false;
+        // Fine patches are counted once; their coarse master faces are excluded.
         long n_nonconforming_faces = 0;
+    };
+
+    struct RegionRefinementStats {
+        // An absent region has both depths set to -1.
+        int min_depth = -1;
+        int max_depth = -1;
+    };
+
+    struct RefinementStats {
+        RegionRefinementStats all;
+        RegionRefinementStats core;
+        RegionRefinementStats envelope;
+        RegionRefinementStats vacuum;
+        // Scalar nodal counts, independent of the coordinate vector dimension.
+        long geometry_dofs = 0;
+        long geometry_true_dofs = 0;
     };
 
     struct JacobianStats {
@@ -138,6 +157,7 @@ namespace stroid::stats {
         std::optional<EllipticityStats>                 ellipticity;
         std::optional<BowingStats>                      bowing;
         std::optional<ConformityStats>                  conformity;
+        std::optional<RefinementStats>                  refinement;
         std::optional<JacobianStats>                    jacobian;
         std::optional<JacobianStats>                    jacobian_stellar;
         std::optional<JacobianStats>                    jacobian_vacuum;

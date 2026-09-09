@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['viewmesh_0',['ViewMesh',['../namespacestroid_1_1_i_o.html#a496f5c16eaffda5922a0b96c1f525dab',1,'stroid::IO']]],
-  ['visualizefacevalence_1',['VisualizeFaceValence',['../namespacestroid_1_1_i_o.html#a8100e130b3a49fdee48bc3c4d4e63963',1,'stroid::IO']]]
+  ['has_5ffeature_0',['has_feature',['../namespacestroid_1_1stats.html#ae11c13445f32b7daac1d787114af2eae',1,'stroid::stats']]]
 ];

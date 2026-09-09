@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['stroid_0',['Stroid',['../index.html',1,'']]]
+  ['stroid_0',['stroid',['../index.html',1,'']]]
 ];

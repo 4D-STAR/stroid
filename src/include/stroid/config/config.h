@@ -19,15 +19,35 @@ namespace stroid::config {
      * These values are typically loaded via
      * `fourdst::config::Config<stroid::config::MeshConfig>` from a TOML file.
      * The README shows the expected TOML layout under the `[main]` table.
-     * Unspecified keys use the defaults defined here.
+     * Unspecified geometry keys use the defaults defined here. ResolveDefaults preserves
+     * the historical fallback for omitted mapping and optimization controls in TOML files.
      */
     struct MeshConfig {
         /**
-         * @brief Number of uniform refinement passes applied after topology creation.
+         * @brief Stellar refinement depth, or uniform depth when vacuum overrides are absent.
          * @section toml
          * - [main].refinement_levels
          */
         std::optional<int> refinement_levels = 4;
+        /**
+         * @brief Minimum refinement depth in the vacuum interior; unset inherits `refinement_levels`.
+         *
+         * Setting either vacuum override enables local isotropic refinement. Vacuum cells at the
+         * stellar surface match the stellar refinement, and automatic one-level grading can
+         * raise the interior depth above this minimum. Requires an external domain.
+         * @section toml
+         * - [main].vacuum_refinement_levels
+         */
+        std::optional<int> vacuum_refinement_levels = std::nullopt;
+        /**
+         * @brief Minimum refinement depth at the vacuum outer boundary; unset inherits `refinement_levels`.
+         *
+         * Boundary-adjacent cells are refined automatically, with grading toward the vacuum
+         * interior. Geometry uses the same polynomial order in every region.
+         * @section toml
+         * - [main].vacuum_outer_refinement_levels
+         */
+        std::optional<int> vacuum_outer_refinement_levels = std::nullopt;
         /**
          * @brief Polynomial order for high-order elements.
          * @section toml
@@ -139,6 +159,39 @@ namespace stroid::config {
 
     };
 
+    /**
+     * @brief Fill omitted configuration values.
+     */
+    inline MeshConfig ResolveDefaults(const MeshConfig& mesh_config) {
+        const MeshConfig defaults;
+        MeshConfig resolved = mesh_config;
+        auto resolve = [](auto& value, const auto& default_value) {
+            if (!value.has_value()) value = default_value;
+        };
+
+        resolve(resolved.refinement_levels, defaults.refinement_levels);
+        resolve(resolved.order, defaults.order);
+        resolve(resolved.include_external_domain, defaults.include_external_domain);
+        resolve(resolved.r_core, defaults.r_core);
+        resolve(resolved.r_star, defaults.r_star);
+        resolve(resolved.flattening, defaults.flattening);
+        resolve(resolved.r_infinity, defaults.r_infinity);
+        resolve(resolved.r_instability, defaults.r_instability);
+        resolve(resolved.core_steepness, defaults.core_steepness);
+        resolve(resolved.continuity_order, defaults.continuity_order);
+        resolve(resolved.surface_bdr_id, defaults.surface_bdr_id);
+        resolve(resolved.inf_bdr_id, defaults.inf_bdr_id);
+        resolve(resolved.core_id, defaults.core_id);
+        resolve(resolved.envelope_id, defaults.envelope_id);
+        resolve(resolved.vacuum_id, defaults.vacuum_id);
+        resolved.core_mapping = resolved.core_mapping.value_or("spherified");
+        resolved.optimization_methods = resolved.optimization_methods.value_or(OptimizationMethods{});
+        resolved.optimization_methods->tmop = resolved.optimization_methods->tmop.value_or(false);
+        resolved.optimization_methods->smoothstep = resolved.optimization_methods->smoothstep.value_or(true);
+
+        return resolved;
+    }
+
     inline std::string to_string(const MeshConfig &mesh_config) {
         auto opt_2_string = [](const OptimizationMethods& opt) {
             std::stringstream ss;
@@ -160,6 +213,8 @@ namespace stroid::config {
 
         ss << "MeshConfig:\n";
         ss << std::format("  refinement_levels: {}\n", mesh_config.refinement_levels.value_or(4));
+        ss << std::format("  vacuum_refinement_levels: {}\n", mesh_config.vacuum_refinement_levels.has_value() ? std::to_string(*mesh_config.vacuum_refinement_levels) : "inherit");
+        ss << std::format("  vacuum_outer_refinement_levels: {}\n", mesh_config.vacuum_outer_refinement_levels.has_value() ? std::to_string(*mesh_config.vacuum_outer_refinement_levels) : "inherit");
         ss << std::format("  order: {}\n", mesh_config.order.value_or(3));
         ss << std::format("  include_external_domain: {}\n", mesh_config.include_external_domain.value_or(true));
         ss << std::format("  r_core: {}\n", mesh_config.r_core.value_or(0.25));

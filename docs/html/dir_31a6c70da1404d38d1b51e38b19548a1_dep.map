@@ -1,4 +1,7 @@
 <map id="src/include/stroid/IO" name="src/include/stroid/IO">
-<area shape="rect" id="node1" href="dir_31a6c70da1404d38d1b51e38b19548a1.html" title="IO" alt="" coords="26,52,65,78"/>
-<area shape="rect" id="clust1" href="dir_3f4f28e99864f6e7d54ad0c93ce0a2a5.html" title="stroid" alt="" coords="16,16,75,89"/>
+<area shape="rect" id="node1" href="dir_9d5018b9ddb63a582aa4c6b91bec2f8c.html" title="utils" alt="" coords="27,126,72,152"/>
+<area shape="rect" id="node2" href="dir_31a6c70da1404d38d1b51e38b19548a1.html" title="IO" alt="" coords="30,52,69,78"/>
+<area shape="poly" id="edge1" href="dir_000006_000020.html" alt="" coords="51,76,52,111,47,110,48,81"/>
+<area shape="rect" id="edge1-headlabel" href="dir_000006_000020.html" title="1" alt="" coords="54,100,61,115"/>
+<area shape="rect" id="clust1" href="dir_3f4f28e99864f6e7d54ad0c93ce0a2a5.html" title="stroid" alt="" coords="16,16,83,162"/>
 </map>

@@ -1,4 +1,7 @@
 var searchData=
 [
-  ['order_0',['order',['../structstroid_1_1config_1_1_mesh_config.html#a860e78f1906acb0c3aa08d55f94de3fd',1,'stroid::config::MeshConfig']]]
+  ['detj_5fmax_0',['detJ_max',['../structstroid_1_1stats_1_1_jacobian_stats.html#a111e61403f15558c3f18047480851996',1,'stroid::stats::JacobianStats']]],
+  ['detj_5fmin_1',['detJ_min',['../structstroid_1_1stats_1_1_jacobian_stats.html#a01d0af968bea5acf49ab33ae7120d500',1,'stroid::stats::JacobianStats']]],
+  ['detj_5fmin_5fat_5fradius_2',['detJ_min_at_radius',['../structstroid_1_1stats_1_1_jacobian_stats.html#ae2e42851b5c866819eadbd761c94248f',1,'stroid::stats::JacobianStats']]],
+  ['done_5f_3',['done_',['../classstroid_1_1topology_1_1_t_m_o_p_progress_bar.html#afd3e86deff330cd6f65fdffe29aa7d79',1,'stroid::topology::TMOPProgressBar']]]
 ];
