@@ -1,16 +1,10 @@
 var searchData=
 [
-  ['mainpage_2emd_0',['mainpage.md',['../mainpage_8md.html',1,'']]],
-  ['mapping_2ecpp_1',['mapping.cpp',['../mapping_8cpp.html',1,'']]],
-  ['mapping_2eh_2',['mapping.h',['../mapping_8h.html',1,'']]],
-  ['markflippedboundaryelements_3',['MarkFlippedBoundaryElements',['../namespacestroid_1_1utils.html#ae047d97d7d5dc12812395909d00f5bbe',1,'stroid::utils']]],
-  ['markflippedelements_4',['MarkFlippedElements',['../namespacestroid_1_1utils.html#a22ab5809195bf85156607790f82b5e2d',1,'stroid::utils']]],
-  ['mesh_20generation_20tool_20for_20stellar_20modeling_5',['A multi-block mesh generation tool for stellar modeling',['../index.html#autotoc_md1',1,'']]],
-  ['mesh_2ecpp_6',['mesh.cpp',['../mesh_8cpp.html',1,'']]],
-  ['mesh_2eh_7',['mesh.h',['../mesh_8h.html',1,'']]],
-  ['mesh_5futils_2ecpp_8',['mesh_utils.cpp',['../mesh__utils_8cpp.html',1,'']]],
-  ['mesh_5futils_2eh_9',['mesh_utils.h',['../mesh__utils_8h.html',1,'']]],
-  ['meshconfig_10',['MeshConfig',['../structstroid_1_1config_1_1_mesh_config.html',1,'stroid::config']]],
-  ['modeling_11',['A multi-block mesh generation tool for stellar modeling',['../index.html#autotoc_md1',1,'']]],
-  ['multi_20block_20mesh_20generation_20tool_20for_20stellar_20modeling_12',['A multi-block mesh generation tool for stellar modeling',['../index.html#autotoc_md1',1,'']]]
+  ['h_5fmax_0',['h_max',['../structstroid_1_1stats_1_1_mesh_size_stats.html#a3b0779500a73ec76fc5ed73b4cd1b1a6',1,'stroid::stats::MeshSizeStats']]],
+  ['h_5fmean_1',['h_mean',['../structstroid_1_1stats_1_1_mesh_size_stats.html#a5410522df658f2eb224c0d424d90ea9c',1,'stroid::stats::MeshSizeStats']]],
+  ['h_5fmin_2',['h_min',['../structstroid_1_1stats_1_1_mesh_size_stats.html#ad2962e19a9d72a437108ee971efcf94c',1,'stroid::stats::MeshSizeStats']]],
+  ['h_5fstddev_3',['h_stddev',['../structstroid_1_1stats_1_1_mesh_size_stats.html#abf51becb7955cdab3a9ff761ffac9802',1,'stroid::stats::MeshSizeStats']]],
+  ['has_5fexternal_5fdomain_4',['has_external_domain',['../structstroid_1_1stats_1_1_config_meta.html#ae96ed13c82b0d9804c1b361b8df12a27',1,'stroid::stats::ConfigMeta']]],
+  ['has_5ffeature_5',['has_feature',['../namespacestroid_1_1stats.html#ae11c13445f32b7daac1d787114af2eae',1,'stroid::stats']]],
+  ['hierarchy_5fenabled_6',['hierarchy_enabled',['../structstroid_1_1stats_1_1_conformity_stats.html#a68d7d7a1eec312c70de354ac23fcefc5',1,'stroid::stats::ConformityStats']]]
 ];

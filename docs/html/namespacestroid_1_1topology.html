@@ -31,7 +31,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="Logo.png"/></td>
   <td id="projectalign">
-   <div id="projectname">stroid<span id="projectnumber">&#160;v0.2.1</span>
+   <div id="projectname">stroid<span id="projectnumber">&#160;v0.6.0</span>
    </div>
    <div id="projectbrief">Multi-block curvilinear mesh generation</div>
   </td>
@@ -102,11 +102,20 @@ $(function(){initNavTree('namespacestroid_1_1topology.html',''); initResizable(t
 
 <div class="header">
   <div class="summary">
+<a href="#nested-classes">Classes</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">stroid::topology Namespace Reference</div></div>
 </div><!--header-->
 <div class="contents">
+
+<p>Topology construction and curvilinear mapping utilities.  
+<a href="#details">More...</a></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
+Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstroid_1_1topology_1_1_t_m_o_p_progress_bar.html">TMOPProgressBar</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a5907aa2e639cda703d48d177abc37caf" id="r_a5907aa2e639cda703d48d177abc37caf"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5907aa2e639cda703d48d177abc37caf">PromoteToHighOrder</a> (mfem::Mesh &amp;mesh, const fourdst::config::Config&lt; <a class="el" href="structstroid_1_1config_1_1_mesh_config.html">config::MeshConfig</a> &gt; &amp;config)</td></tr>
@@ -115,6 +124,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a836ed13e5bac63e7952c3ce4e5532e78" id="r_a836ed13e5bac63e7952c3ce4e5532e78"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a836ed13e5bac63e7952c3ce4e5532e78">ProjectMesh</a> (mfem::Mesh &amp;mesh, const fourdst::config::Config&lt; <a class="el" href="structstroid_1_1config_1_1_mesh_config.html">config::MeshConfig</a> &gt; &amp;config)</td></tr>
 <tr class="memdesc:a836ed13e5bac63e7952c3ce4e5532e78"><td class="mdescLeft">&#160;</td><td class="mdescRight">Project high-order mesh nodes using the configured curvilinear mapping.  <br /></td></tr>
 <tr class="separator:a836ed13e5bac63e7952c3ce4e5532e78"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5ab92f7fb487c4639042539bf7b86606" id="r_a5ab92f7fb487c4639042539bf7b86606"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="structstroid_1_1_scalar_mesh_field.html">ScalarMeshField</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5ab92f7fb487c4639042539bf7b86606">BuildExteriorCoordinate</a> (mfem::Mesh &amp;mesh, mfem::Mesh &amp;reference_mesh, const fourdst::config::Config&lt; <a class="el" href="structstroid_1_1config_1_1_mesh_config.html">config::MeshConfig</a> &gt; &amp;config)</td></tr>
+<tr class="memdesc:a5ab92f7fb487c4639042539bf7b86606"><td class="mdescLeft">&#160;</td><td class="mdescRight">Build a scalar grid function representing the compactification coordinate for a mesh. This ranges from 0-1 with 0 at the stellar surface and 1 at the compactified infinity.  <br /></td></tr>
+<tr class="separator:a5ab92f7fb487c4639042539bf7b86606"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a03f0b29ccf7d427a175de9ff75824b7c" id="r_a03f0b29ccf7d427a175de9ff75824b7c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a03f0b29ccf7d427a175de9ff75824b7c">ApplyEquiangular</a> (mfem::Vector &amp;pos)</td></tr>
 <tr class="memdesc:a03f0b29ccf7d427a175de9ff75824b7c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Apply an equiangular (gnomonic) projection to a point on a cube.  <br /></td></tr>
 <tr class="separator:a03f0b29ccf7d427a175de9ff75824b7c"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -127,14 +139,23 @@ Functions</h2></td></tr>
 <tr class="memitem:a394e33bdfafdaccd6edfaae0642d3456" id="r_a394e33bdfafdaccd6edfaae0642d3456"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a394e33bdfafdaccd6edfaae0642d3456">TransformPoint</a> (mfem::Vector &amp;pos, const fourdst::config::Config&lt; <a class="el" href="structstroid_1_1config_1_1_mesh_config.html">config::MeshConfig</a> &gt; &amp;config, int attribute_id)</td></tr>
 <tr class="memdesc:a394e33bdfafdaccd6edfaae0642d3456"><td class="mdescLeft">&#160;</td><td class="mdescRight">Map a point from the initial block topology to the curvilinear domain.  <br /></td></tr>
 <tr class="separator:a394e33bdfafdaccd6edfaae0642d3456"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a11783fac833cd43c7c59d712912795a8" id="r_a11783fac833cd43c7c59d712912795a8"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a11783fac833cd43c7c59d712912795a8">ComputeExteriorCoordinate</a> (const mfem::Vector &amp;logical_position, int attribute, const fourdst::config::Config&lt; <a class="el" href="structstroid_1_1config_1_1_mesh_config.html">config::MeshConfig</a> &gt; &amp;config)</td></tr>
+<tr class="memdesc:a11783fac833cd43c7c59d712912795a8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute the compactification coordinate for a point in the curvilinear domain. This ranges from 0-1 with 0 at the stellar surface and 1 at the compactified infinity.  <br /></td></tr>
+<tr class="separator:a11783fac833cd43c7c59d712912795a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac52b5393b5f5accf0337c34efca891f0" id="r_ac52b5393b5f5accf0337c34efca891f0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac52b5393b5f5accf0337c34efca891f0">ApplyTMOP</a> (mfem::Mesh &amp;mesh, const fourdst::config::Config&lt; <a class="el" href="structstroid_1_1config_1_1_mesh_config.html">config::MeshConfig</a> &gt; &amp;config)</td></tr>
+<tr class="separator:ac52b5393b5f5accf0337c34efca891f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4ea968d066cf63e5bb1e68150facdec1" id="r_a4ea968d066cf63e5bb1e68150facdec1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4ea968d066cf63e5bb1e68150facdec1">OptimizeMesh</a> (mfem::Mesh &amp;mesh, const fourdst::config::Config&lt; <a class="el" href="structstroid_1_1config_1_1_mesh_config.html">config::MeshConfig</a> &gt; &amp;cfg)</td></tr>
+<tr class="separator:a4ea968d066cf63e5bb1e68150facdec1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abc0d8a1fb8e9c5ac0e259e4c93db7892" id="r_abc0d8a1fb8e9c5ac0e259e4c93db7892"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; mfem::Mesh &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abc0d8a1fb8e9c5ac0e259e4c93db7892">BuildSkeleton</a> (const fourdst::config::Config&lt; <a class="el" href="structstroid_1_1config_1_1_mesh_config.html">config::MeshConfig</a> &gt; &amp;config)</td></tr>
 <tr class="memdesc:abc0d8a1fb8e9c5ac0e259e4c93db7892"><td class="mdescLeft">&#160;</td><td class="mdescRight">Build the initial multi-block mesh topology for the star model.  <br /></td></tr>
 <tr class="separator:abc0d8a1fb8e9c5ac0e259e4c93db7892"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a62774bcba7ea1a485892dcd4bed6425b" id="r_a62774bcba7ea1a485892dcd4bed6425b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a62774bcba7ea1a485892dcd4bed6425b">Finalize</a> (mfem::Mesh &amp;mesh, const fourdst::config::Config&lt; <a class="el" href="structstroid_1_1config_1_1_mesh_config.html">config::MeshConfig</a> &gt; &amp;config)</td></tr>
-<tr class="memdesc:a62774bcba7ea1a485892dcd4bed6425b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finalize topology, validate orientation, and apply uniform refinement.  <br /></td></tr>
+<tr class="memdesc:a62774bcba7ea1a485892dcd4bed6425b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finalize topology, validate orientation, and apply the configured refinement policy.  <br /></td></tr>
 <tr class="separator:a62774bcba7ea1a485892dcd4bed6425b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Function Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Topology construction and curvilinear mapping utilities. </p>
+</div><h2 class="groupheader">Function Documentation</h2>
 <a id="a03f0b29ccf7d427a175de9ff75824b7c" name="a03f0b29ccf7d427a175de9ff75824b7c"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a03f0b29ccf7d427a175de9ff75824b7c">&#9670;&#160;</a></span>ApplyEquiangular()</h2>
 
@@ -220,6 +241,65 @@ Functions</h2></td></tr>
 
 </div>
 </div>
+<a id="ac52b5393b5f5accf0337c34efca891f0" name="ac52b5393b5f5accf0337c34efca891f0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac52b5393b5f5accf0337c34efca891f0">&#9670;&#160;</a></span>ApplyTMOP()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void stroid::topology::ApplyTMOP </td>
+          <td>(</td>
+          <td class="paramtype">mfem::Mesh &amp;</td>          <td class="paramname"><span class="paramname"><em>mesh</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const fourdst::config::Config&lt; <a class="el" href="structstroid_1_1config_1_1_mesh_config.html">config::MeshConfig</a> &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>config</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>@breif Apply target matrix optimization to improve conditioning of the mesh </p>
+
+</div>
+</div>
+<a id="a5ab92f7fb487c4639042539bf7b86606" name="a5ab92f7fb487c4639042539bf7b86606"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5ab92f7fb487c4639042539bf7b86606">&#9670;&#160;</a></span>BuildExteriorCoordinate()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::unique_ptr&lt; <a class="el" href="structstroid_1_1_scalar_mesh_field.html">ScalarMeshField</a> &gt; stroid::topology::BuildExteriorCoordinate </td>
+          <td>(</td>
+          <td class="paramtype">mfem::Mesh &amp;</td>          <td class="paramname"><span class="paramname"><em>mesh</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">mfem::Mesh &amp;</td>          <td class="paramname"><span class="paramname"><em>reference_mesh</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const fourdst::config::Config&lt; <a class="el" href="structstroid_1_1config_1_1_mesh_config.html">config::MeshConfig</a> &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>config</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Build a scalar grid function representing the compactification coordinate for a mesh. This ranges from 0-1 with 0 at the stellar surface and 1 at the compactified infinity. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">mesh</td><td>Reference to the underlying serial MFEM mesh which has been promoted to high-order and projected into the curvilinear domain. </td></tr>
+    <tr><td class="paramname">reference_mesh</td><td>reference to the underlying serial which has not been promoted to high-order or projected into the curvilinear domain. This is used to compute the compactification coordinate. </td></tr>
+    <tr><td class="paramname">config</td><td>Config file </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Unique pointer to a scalar mesh field representing the compactification coordinate. </dd></dl>
+
+</div>
+</div>
 <a id="abc0d8a1fb8e9c5ac0e259e4c93db7892" name="abc0d8a1fb8e9c5ac0e259e4c93db7892"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#abc0d8a1fb8e9c5ac0e259e4c93db7892">&#9670;&#160;</a></span>BuildSkeleton()</h2>
 
@@ -238,11 +318,48 @@ Functions</h2></td></tr>
 <p>Build the initial multi-block mesh topology for the star model. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">config</td><td>Mesh configuration (uses radii and domain flags). </td></tr>
+    <tr><td class="paramname">config</td><td>Mesh configuration (uses radii, domain flags, and <code>core_mapping</code>). The legacy <code>spherified</code> core uses one block; <code>multi_block</code> uses an inner Cartesian block and six core transition blocks. </td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Newly allocated mesh skeleton (not yet refined or curved). </dd></dl>
+
+</div>
+</div>
+<a id="a11783fac833cd43c7c59d712912795a8" name="a11783fac833cd43c7c59d712912795a8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a11783fac833cd43c7c59d712912795a8">&#9670;&#160;</a></span>ComputeExteriorCoordinate()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double stroid::topology::ComputeExteriorCoordinate </td>
+          <td>(</td>
+          <td class="paramtype">const mfem::Vector &amp;</td>          <td class="paramname"><span class="paramname"><em>logical_position</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>attribute</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const fourdst::config::Config&lt; <a class="el" href="structstroid_1_1config_1_1_mesh_config.html">config::MeshConfig</a> &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>config</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Compute the compactification coordinate for a point in the curvilinear domain. This ranges from 0-1 with 0 at the stellar surface and 1 at the compactified infinity. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">logical_position</td><td>Logical position of the point in the curvilinear domain. </td></tr>
+    <tr><td class="paramname">attribute</td><td>Element attribute ID (used to determine the exterior coordinate). </td></tr>
+    <tr><td class="paramname">config</td><td>Mesh configuration (uses radii and flattening). </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Compactification coordinate ranging from 0 (stellar surface) to 1 (compactified infinity). </dd></dl>
 
 </div>
 </div>
@@ -265,14 +382,36 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Finalize topology, validate orientation, and apply uniform refinement. </p>
+<p>Finalize topology, validate orientation, and apply the configured refinement policy. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">mesh</td><td>Mesh to finalize in-place. </td></tr>
-    <tr><td class="paramname">config</td><td>Mesh configuration (uses <code>refinement_levels</code>). </td></tr>
+    <tr><td class="paramname">config</td><td>Mesh configuration. Vacuum refinement overrides enable a balanced hierarchy with fine layers at both vacuum boundaries and a conforming stellar interface. Without overrides, refinement is uniform. </td></tr>
   </table>
   </dd>
 </dl>
+
+</div>
+</div>
+<a id="a4ea968d066cf63e5bb1e68150facdec1" name="a4ea968d066cf63e5bb1e68150facdec1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4ea968d066cf63e5bb1e68150facdec1">&#9670;&#160;</a></span>OptimizeMesh()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void stroid::topology::OptimizeMesh </td>
+          <td>(</td>
+          <td class="paramtype">mfem::Mesh &amp;</td>          <td class="paramname"><span class="paramname"><em>mesh</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const fourdst::config::Config&lt; <a class="el" href="structstroid_1_1config_1_1_mesh_config.html">config::MeshConfig</a> &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>cfg</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>@breif Helper to call TMOP if the correct flags are set </p>
 
 </div>
 </div>
@@ -364,7 +503,7 @@ Functions</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">pos</td><td>Position vector updated in-place. </td></tr>
-    <tr><td class="paramname">config</td><td>Mesh configuration (uses radii, flattening, instability radius, and core steepness). </td></tr>
+    <tr><td class="paramname">config</td><td>Mesh configuration (uses radii, flattening, and <code>core_mapping</code>). The <code>multi_block</code> strategy requires the matching skeleton from BuildSkeleton; changing only the mapping on a legacy core element is not supported. </td></tr>
     <tr><td class="paramname">attribute_id</td><td>Element attribute ID (currently unused). </td></tr>
   </table>
   </dd>

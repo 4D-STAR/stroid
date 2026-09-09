@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['boundary_5felement_5fid_0',['BOUNDARY_ELEMENT_ID',['../namespacestroid_1_1_i_o.html#ad4048304d8a0c7075d2b2a6e465d0b6eaee96e14c2b71bd59252006289ba464cf',1,'stroid::IO']]]
+  ['axes_0',['AXES',['../namespacestroid_1_1stats.html#a10596f3f5de79404d640278d55bded0ba70842c6aface1f8fa1b768e1bb3bf838',1,'stroid::stats']]]
 ];

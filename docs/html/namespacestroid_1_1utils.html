@@ -31,7 +31,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="Logo.png"/></td>
   <td id="projectalign">
-   <div id="projectname">stroid<span id="projectnumber">&#160;v0.2.1</span>
+   <div id="projectname">stroid<span id="projectnumber">&#160;v0.6.0</span>
    </div>
    <div id="projectbrief">Multi-block curvilinear mesh generation</div>
   </td>
@@ -102,11 +102,20 @@ $(function(){initNavTree('namespacestroid_1_1utils.html',''); initResizable(true
 
 <div class="header">
   <div class="summary">
+<a href="#namespaces">Namespaces</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">stroid::utils Namespace Reference</div></div>
 </div><!--header-->
 <div class="contents">
+
+<p>Mesh inspection and validation utilities.  
+<a href="#details">More...</a></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
+Namespaces</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacestroid_1_1utils_1_1term__support.html">term_support</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a22ab5809195bf85156607790f82b5e2d" id="r_a22ab5809195bf85156607790f82b5e2d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a22ab5809195bf85156607790f82b5e2d">MarkFlippedElements</a> (mfem::Mesh &amp;mesh)</td></tr>
@@ -115,8 +124,56 @@ Functions</h2></td></tr>
 <tr class="memitem:ae047d97d7d5dc12812395909d00f5bbe" id="r_ae047d97d7d5dc12812395909d00f5bbe"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae047d97d7d5dc12812395909d00f5bbe">MarkFlippedBoundaryElements</a> (mfem::Mesh &amp;mesh)</td></tr>
 <tr class="memdesc:ae047d97d7d5dc12812395909d00f5bbe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Mark boundary elements whose outward normal orientation is flipped.  <br /></td></tr>
 <tr class="separator:ae047d97d7d5dc12812395909d00f5bbe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad6d849312ba094bda29ab3adf2326435" id="r_ad6d849312ba094bda29ab3adf2326435"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad6d849312ba094bda29ab3adf2326435">ExportJacobianRadialProfile</a> (mfem::Mesh &amp;mesh, const std::string &amp;filename)</td></tr>
+<tr class="separator:ad6d849312ba094bda29ab3adf2326435"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa81cc28e65c9208a29a6aa9c51ba5126" id="r_aa81cc28e65c9208a29a6aa9c51ba5126"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; mfem::Mesh &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa81cc28e65c9208a29a6aa9c51ba5126">BuildProjected</a> (const mfem::Mesh &amp;reference, const fourdst::config::Config&lt; <a class="el" href="structstroid_1_1config_1_1_mesh_config.html">config::MeshConfig</a> &gt; &amp;cfg)</td></tr>
+<tr class="separator:aa81cc28e65c9208a29a6aa9c51ba5126"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Function Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Mesh inspection and validation utilities. </p>
+</div><h2 class="groupheader">Function Documentation</h2>
+<a id="aa81cc28e65c9208a29a6aa9c51ba5126" name="aa81cc28e65c9208a29a6aa9c51ba5126"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa81cc28e65c9208a29a6aa9c51ba5126">&#9670;&#160;</a></span>BuildProjected()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::unique_ptr&lt; mfem::Mesh &gt; stroid::utils::BuildProjected </td>
+          <td>(</td>
+          <td class="paramtype">const mfem::Mesh &amp;</td>          <td class="paramname"><span class="paramname"><em>reference</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const fourdst::config::Config&lt; <a class="el" href="structstroid_1_1config_1_1_mesh_config.html">config::MeshConfig</a> &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>cfg</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ad6d849312ba094bda29ab3adf2326435" name="ad6d849312ba094bda29ab3adf2326435"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad6d849312ba094bda29ab3adf2326435">&#9670;&#160;</a></span>ExportJacobianRadialProfile()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void stroid::utils::ExportJacobianRadialProfile </td>
+          <td>(</td>
+          <td class="paramtype">mfem::Mesh &amp;</td>          <td class="paramname"><span class="paramname"><em>mesh</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>filename</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="ae047d97d7d5dc12812395909d00f5bbe" name="ae047d97d7d5dc12812395909d00f5bbe"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ae047d97d7d5dc12812395909d00f5bbe">&#9670;&#160;</a></span>MarkFlippedBoundaryElements()</h2>
 

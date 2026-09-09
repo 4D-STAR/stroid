@@ -1,8 +1,9 @@
 var searchData=
 [
-  ['r_5fcore_0',['r_core',['../structstroid_1_1config_1_1_mesh_config.html#a5c68a895f73dc82a38a8daac22a83ad7',1,'stroid::config::MeshConfig']]],
-  ['r_5finfinity_1',['r_infinity',['../structstroid_1_1config_1_1_mesh_config.html#ac7546899ebbfe191ea3a8bf2403b31eb',1,'stroid::config::MeshConfig']]],
-  ['r_5finstability_2',['r_instability',['../structstroid_1_1config_1_1_mesh_config.html#a4da6d99ff7ba24d2f917e1fd98ddd877',1,'stroid::config::MeshConfig']]],
-  ['r_5fstar_3',['r_star',['../structstroid_1_1config_1_1_mesh_config.html#a3fe80a30990d484dcc39b6f9a0befc05',1,'stroid::config::MeshConfig']]],
-  ['refinement_5flevels_4',['refinement_levels',['../structstroid_1_1config_1_1_mesh_config.html#a8cafcbebf64ae251517118eb152de981',1,'stroid::config::MeshConfig']]]
+  ['element_5fcounts_0',['element_counts',['../structstroid_1_1stats_1_1_mesh_stats.html#aae74d0872a0b3c0d2dea9529171388fe',1,'stroid::stats::MeshStats']]],
+  ['ellipticity_1',['ellipticity',['../structstroid_1_1stats_1_1_mesh_stats.html#ae9cab419f39d089ba48522385177e6ae',1,'stroid::stats::MeshStats']]],
+  ['envelope_2',['envelope',['../structstroid_1_1stats_1_1_refinement_stats.html#a1c1898450bd29021f9e9ee061932b805',1,'stroid::stats::RefinementStats::envelope'],['../structstroid_1_1stats_1_1_element_counts.html#a5e60266ab6c79811e4e64b09457d2138',1,'stroid::stats::ElementCounts::envelope']]],
+  ['envelope_5fid_3',['envelope_id',['../structstroid_1_1config_1_1_mesh_config.html#a8d30e307723eba6d964dfbe835532c8e',1,'stroid::config::MeshConfig']]],
+  ['errors_4',['errors',['../structstroid_1_1stats_1_1_mesh_stats.html#a77dcb0bd9fa7e211c9a14cc6e65da426',1,'stroid::stats::MeshStats']]],
+  ['exterior_5fcoordinate_5',['exterior_coordinate',['../structstroid_1_1_stroid_mesh.html#a6ee2e855b58552ac9204b6b85f5ade1a',1,'stroid::StroidMesh']]]
 ];

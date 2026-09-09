@@ -31,7 +31,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="Logo.png"/></td>
   <td id="projectalign">
-   <div id="projectname">stroid<span id="projectnumber">&#160;v0.2.1</span>
+   <div id="projectname">stroid<span id="projectnumber">&#160;v0.6.0</span>
    </div>
    <div id="projectbrief">Multi-block curvilinear mesh generation</div>
   </td>
@@ -103,18 +103,31 @@ $(function(){initNavTree('config_8h.html',''); initResizable(true); });
 <div class="header">
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
-<a href="#namespaces">Namespaces</a>  </div>
+<a href="#namespaces">Namespaces</a> &#124;
+<a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">config.h File Reference</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><div class="dynheader">
+<div class="textblock"><code>#include &lt;cstdint&gt;</code><br />
+<code>#include &lt;optional&gt;</code><br />
+<code>#include &lt;string&gt;</code><br />
+<code>#include &lt;format&gt;</code><br />
+<code>#include &lt;sstream&gt;</code><br />
+</div><div class="textblock"><div class="dynheader">
+Include dependency graph for config.h:</div>
+<div class="dyncontent">
+<div class="center"><iframe scrolling="no" frameborder="0" src="config_8h__incl.svg" width="415" height="126"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+</div>
+</div><div class="textblock"><div class="dynheader">
 This graph shows which files directly or indirectly include this file:</div>
 <div class="dyncontent">
-<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="config_8h__dep__incl.svg" width="100%" height="460"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="config_8h__dep__incl.svg" width="100%" height="593"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
 </div>
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structstroid_1_1config_1_1_optimization_methods.html">stroid::config::OptimizationMethods</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structstroid_1_1config_1_1_mesh_config.html">stroid::config::MeshConfig</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Configuration parameters for stroid mesh generation.  <a href="structstroid_1_1config_1_1_mesh_config.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -122,9 +135,19 @@ Classes</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
 Namespaces</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacestroid.html">stroid</a></td></tr>
+<tr class="memdesc:namespacestroid"><td class="mdescLeft">&#160;</td><td class="mdescRight">Public API surface for the stroid mesh generation library. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacestroid_1_1config.html">stroid::config</a></td></tr>
+<tr class="memdesc:namespacestroid_1_1config"><td class="mdescLeft">&#160;</td><td class="mdescRight">Configuration types and defaults for mesh generation. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:a84d2f4618367487820ac818c3c47a39a" id="r_a84d2f4618367487820ac818c3c47a39a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structstroid_1_1config_1_1_mesh_config.html">MeshConfig</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacestroid_1_1config.html#a84d2f4618367487820ac818c3c47a39a">stroid::config::ResolveDefaults</a> (const <a class="el" href="structstroid_1_1config_1_1_mesh_config.html">MeshConfig</a> &amp;mesh_config)</td></tr>
+<tr class="memdesc:a84d2f4618367487820ac818c3c47a39a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Fill omitted configuration values.  <br /></td></tr>
+<tr class="separator:a84d2f4618367487820ac818c3c47a39a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4f2409cb05fd572794c115d850502d61" id="r_a4f2409cb05fd572794c115d850502d61"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacestroid_1_1config.html#a4f2409cb05fd572794c115d850502d61">stroid::config::to_string</a> (const <a class="el" href="structstroid_1_1config_1_1_mesh_config.html">MeshConfig</a> &amp;mesh_config)</td></tr>
+<tr class="separator:a4f2409cb05fd572794c115d850502d61"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 </div><!-- contents -->
 </div><!-- doc-content -->

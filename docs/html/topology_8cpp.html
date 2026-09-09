@@ -31,7 +31,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="Logo.png"/></td>
   <td id="projectalign">
-   <div id="projectname">stroid<span id="projectnumber">&#160;v0.2.1</span>
+   <div id="projectname">stroid<span id="projectnumber">&#160;v0.6.0</span>
    </div>
    <div id="projectbrief">Multi-block curvilinear mesh generation</div>
   </td>
@@ -110,19 +110,25 @@ $(function(){initNavTree('topology_8cpp.html',''); initResizable(true); });
 <div class="textblock"><code>#include &quot;mfem.hpp&quot;</code><br />
 <code>#include &lt;vector&gt;</code><br />
 <code>#include &lt;memory&gt;</code><br />
+<code>#include &lt;cmath&gt;</code><br />
+<code>#include &lt;stdexcept&gt;</code><br />
+<code>#include &lt;algorithm&gt;</code><br />
+<code>#include &lt;limits&gt;</code><br />
 <code>#include &quot;<a class="el" href="config_8h.html">stroid/config/config.h</a>&quot;</code><br />
 <code>#include &quot;fourdst/config/config.h&quot;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for topology.cpp:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="topology_8cpp__incl.svg" width="604" height="111"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="topology_8cpp__incl.svg" width="100%" height="438"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
 </div>
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
 Namespaces</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacestroid.html">stroid</a></td></tr>
+<tr class="memdesc:namespacestroid"><td class="mdescLeft">&#160;</td><td class="mdescRight">Public API surface for the stroid mesh generation library. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacestroid_1_1topology.html">stroid::topology</a></td></tr>
+<tr class="memdesc:namespacestroid_1_1topology"><td class="mdescLeft">&#160;</td><td class="mdescRight">Topology construction and curvilinear mapping utilities. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
@@ -131,7 +137,7 @@ Functions</h2></td></tr>
 <tr class="memdesc:abc0d8a1fb8e9c5ac0e259e4c93db7892"><td class="mdescLeft">&#160;</td><td class="mdescRight">Build the initial multi-block mesh topology for the star model.  <br /></td></tr>
 <tr class="separator:abc0d8a1fb8e9c5ac0e259e4c93db7892"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a62774bcba7ea1a485892dcd4bed6425b" id="r_a62774bcba7ea1a485892dcd4bed6425b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacestroid_1_1topology.html#a62774bcba7ea1a485892dcd4bed6425b">stroid::topology::Finalize</a> (mfem::Mesh &amp;mesh, const fourdst::config::Config&lt; <a class="el" href="structstroid_1_1config_1_1_mesh_config.html">config::MeshConfig</a> &gt; &amp;config)</td></tr>
-<tr class="memdesc:a62774bcba7ea1a485892dcd4bed6425b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finalize topology, validate orientation, and apply uniform refinement.  <br /></td></tr>
+<tr class="memdesc:a62774bcba7ea1a485892dcd4bed6425b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finalize topology, validate orientation, and apply the configured refinement policy.  <br /></td></tr>
 <tr class="separator:a62774bcba7ea1a485892dcd4bed6425b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 </div><!-- contents -->
