@@ -181,7 +181,8 @@ class TMOPProgressBar : public mfem::IterativeSolverMonitor {
         a.SetEssentialTrueDofs(ess_tdof_list);
 
         mfem::GridFunction* nodes = mesh.GetNodes();
-        mfem::Vector x(*nodes);
+        mfem::Vector x;
+        nodes->GetTrueDofs(x);
         mfem::Vector b(a.Height());
         b = 0.0;
 
@@ -222,7 +223,7 @@ class TMOPProgressBar : public mfem::IterativeSolverMonitor {
 
         std::cout << "Applying TMOP optimization to mesh. Note this may take a long time. Depending on your mesh resolution expect to wait up to the order of 10s of minutes..." << std::endl;
         newton.Mult(b, x);
-        *nodes = x;
+        nodes->SetFromTrueDofs(x);
 
         mesh.NodesUpdated();
 

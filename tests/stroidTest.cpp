@@ -358,11 +358,11 @@ std::optional<double> EvalGridFunctionAtPoint(
 class stroidTest : public ::testing::Test {};
 
 /**
- * @brief Verifies the baseline block topology cardinalities in the no-vacuum case.
+ * @brief Verifies the default multi-block topology including the vacuum.
  * @details
  * Rationale: this is the fastest canary for accidental edits in block construction order,
  * vertex indexing, or boundary-face assembly.
- * Method: build the default skeleton and assert exact counts (3D, 16 vertices, 7 hexes, 6 bdr quads).
+ * Method: build the default skeleton and assert exact counts (3D, 32 vertices, 19 hexes, 12 bdr quads).
  * If this fails: inspect `stroid::topology::BuildSkeleton` in `src/lib/topology/topology.cpp`,
  * especially `add_box`, `stellar_shells`, and `surface_bdr_quads`, plus ID defaults in
  * `src/include/stroid/config/config.h`.
@@ -373,8 +373,8 @@ TEST_F(stroidTest, BuildSkeleton_DefaultCounts) {
 
     ASSERT_NE(mesh, nullptr);
     EXPECT_EQ(mesh->Dimension(), 3);
-    EXPECT_EQ(mesh->GetNV(), 24);
-    EXPECT_EQ(mesh->GetNE(), 13);
+    EXPECT_EQ(mesh->GetNV(), 32);
+    EXPECT_EQ(mesh->GetNE(), 19);
     EXPECT_EQ(mesh->GetNBE(), 12);
 }
 
@@ -1355,8 +1355,8 @@ void ExpectCoreFaceContinuity(mfem::Mesh& mesh, int coreAttribute) {
 
 } // namespace
 
-TEST_F(stroidTest, MultiBlockCore_TopologyCountsAndAttributesAreOptIn) {
-    EXPECT_EQ(stroid::config::MeshConfig{}.core_mapping.value(), "spherified");
+TEST_F(stroidTest, MultiBlockCore_DefaultTopologyCountsAndAttributes) {
+    EXPECT_EQ(stroid::config::MeshConfig{}.core_mapping.value(), "multi_block");
     for (const bool external : {false, true}) {
         SCOPED_TRACE(external);
         auto cfg = MultiBlockConfiguration(2, 0, external);

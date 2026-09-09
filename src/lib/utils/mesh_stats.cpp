@@ -61,9 +61,37 @@ namespace stroid::stats {
 
         if (has_feature(features, MeshStatFeatures::CONFORMITY)) {
             ConformityStats conformity;
-            conformity.conforming = mesh->Conforming();
-            conformity.n_nonconforming_faces = conformity.conforming ? 0 : -99; // TODO: count
+            conformity.hierarchy_enabled = mesh->ncmesh != nullptr;
+            for (int f = 0; f < mesh->GetNFaces(); ++f) {
+                if (mesh->GetFaceInformation(f).IsNonconformingFine()) {
+                    ++conformity.n_nonconforming_faces;
+                }
+            }
+            conformity.conforming = conformity.n_nonconforming_faces == 0;
             out.conformity = conformity;
+        }
+
+        if (has_feature(features, MeshStatFeatures::REFINEMENT)) {
+            RefinementStats refinement;
+            auto update_depth = [](RegionRefinementStats& region, const int depth) {
+                if (region.min_depth < 0) region.min_depth = depth;
+                region.min_depth = std::min(region.min_depth, depth);
+                region.max_depth = std::max(region.max_depth, depth);
+            };
+            for (int e = 0; e < mesh->GetNE(); ++e) {
+                const int depth = mesh->ncmesh ? mesh->ncmesh->GetElementDepth(e) :
+                    static_cast<int>(sm.refinement_levels);
+                update_depth(refinement.all, depth);
+                const int attr = mesh->GetAttribute(e);
+                if      (attr == core_id) update_depth(refinement.core, depth);
+                else if (attr == env_id)  update_depth(refinement.envelope, depth);
+                else if (attr == vac_id)  update_depth(refinement.vacuum, depth);
+            }
+            if (const auto* fes = mesh->GetNodalFESpace()) {
+                refinement.geometry_dofs = fes->GetNDofs();
+                refinement.geometry_true_dofs = fes->GetNConformingDofs();
+            }
+            out.refinement = refinement;
         }
 
         // ============================ SURFACE PASS ============================
@@ -428,7 +456,18 @@ namespace stroid::stats {
                  b.max_inward, b.max_outward, b.rms));
         }
         if (s.conformity) {
-            line(std::format("conforming: {}", s.conformity->conforming));
+            const auto& c = *s.conformity;
+            line(std::format("conforming: {} (hierarchy={}, hanging face patches={})",
+                 c.conforming, c.hierarchy_enabled, c.n_nonconforming_faces));
+        }
+        if (s.refinement) {
+            const auto& r = *s.refinement;
+            line(std::format(
+                "refinement depth: all=[{},{}] core=[{},{}] env=[{},{}] vac=[{},{}]",
+                r.all.min_depth, r.all.max_depth, r.core.min_depth, r.core.max_depth,
+                r.envelope.min_depth, r.envelope.max_depth, r.vacuum.min_depth, r.vacuum.max_depth));
+            line(std::format("scalar geometry DOFs: total={} true={}",
+                 r.geometry_dofs, r.geometry_true_dofs));
         }
 
         auto jac_line = [&](const std::string& label, const JacobianStats& j) {

@@ -41,7 +41,7 @@ namespace stroid::IO {
 #           - reference mesh      : a reference, linear order mesh, used to ensure that the primary mesh remains well formed
 #           - exterior coordinate : a scalar material coordinate which is zero at the stellar surface and one at infinity
 #           - config              : The configuration options initially used to generate the mesh
-#           - refinement-levels   : the total number of refinement levels the primary mesh has been subjected too
+#           - refinement-levels   : stellar baseline depth plus subsequent uniform passes; local depths are stored in the mesh hierarchy
 # NOTE: EACH BLOCK OF DATA IS STORED BETWEEN "BEGIN BLOCK <NAME>\n ... \nEND BLOCK <NAME>
 #       PARSING THE UNDERLYING MFEM NATIVE MESH FORMAT CAN BE DONE WITH MFEM'S STREAM READER
 #       IF YOU EXTRACT THE RAW CONTENTS BETWEEN THOSE LINES
@@ -101,6 +101,16 @@ END BLOCK HEADER)",
 # std::optional<int>
 # default: 4
 refinement_levels:{}
+
+# vacuum_refinement_levels: Minimum vacuum interior depth; inherit uses refinement_levels
+# std::optional<int>
+# default: inherit
+vacuum_refinement_levels:{}
+
+# vacuum_outer_refinement_levels: Minimum vacuum outer-boundary depth; inherit uses refinement_levels
+# std::optional<int>
+# default: inherit
+vacuum_outer_refinement_levels:{}
 
 # order: Polynomial / geometric order to use when constructing the mesh
 # std::optional<int>
@@ -183,6 +193,8 @@ optimization_methods-smoothstep:{}
 core_mapping:{}
 END BLOCK CONFIG)",
             format_opt(mesh.config.refinement_levels, d.refinement_levels.value()),
+            mesh.config.vacuum_refinement_levels.has_value() ? std::to_string(*mesh.config.vacuum_refinement_levels) : "inherit",
+            mesh.config.vacuum_outer_refinement_levels.has_value() ? std::to_string(*mesh.config.vacuum_outer_refinement_levels) : "inherit",
             format_opt(mesh.config.order, d.order.value()),
             format_opt(mesh.config.include_external_domain, d.include_external_domain.value()),
             format_opt(mesh.config.r_core, d.r_core.value()),
@@ -395,12 +407,26 @@ END BLOCK CONFIG)",
 
         std::expected<config::MeshConfig, std::string> parse_config(const std::string& content) {
             config::MeshConfig cfg;
+            // Files written before core_mapping was introduced use the single core cube.
+            cfg.core_mapping = "spherified";
             config::OptimizationMethods opt =
                 cfg.optimization_methods.value_or(config::OptimizationMethods{});
 
             using Handler = std::function<std::expected<void, std::string>(std::string_view)>;
 
             auto as_int    = [](std::optional<int>* f)    { return [f](const std::string_view v) -> std::expected<void, std::string> { auto r = parse_int<int>(v);    if (!r) return std::unexpected(r.error()); *f = *r; return {}; }; };
+            auto as_optional_int = [](std::optional<int>* f) {
+                return [f](const std::string_view v) -> std::expected<void, std::string> {
+                    if (trim(v) == "inherit") {
+                        f->reset();
+                        return {};
+                    }
+                    auto r = parse_int<int>(v);
+                    if (!r) return std::unexpected(r.error());
+                    *f = *r;
+                    return {};
+                };
+            };
             auto as_size   = [](std::optional<size_t>* f) { return [f](const std::string_view v) -> std::expected<void, std::string> { auto r = parse_int<size_t>(v); if (!r) return std::unexpected(r.error()); *f = *r; return {}; }; };
             auto as_double = [](std::optional<double>* f) { return [f](const std::string_view v) -> std::expected<void, std::string> { auto r = parse_double(v);     if (!r) return std::unexpected(r.error()); *f = *r; return {}; }; };
             auto as_bool   = [](std::optional<bool>* f)   { return [f](const std::string_view v) -> std::expected<void, std::string> { auto r = parse_bool(v);       if (!r) return std::unexpected(r.error()); *f = *r; return {}; }; };
@@ -408,6 +434,8 @@ END BLOCK CONFIG)",
 
             const std::unordered_map<std::string_view, Handler> handlers = {
                 {"refinement_levels",               as_int(&cfg.refinement_levels)},
+                {"vacuum_refinement_levels",        as_optional_int(&cfg.vacuum_refinement_levels)},
+                {"vacuum_outer_refinement_levels",  as_optional_int(&cfg.vacuum_outer_refinement_levels)},
                 {"order",                           as_int(&cfg.order)},
                 {"include_external_domain",         as_bool(&cfg.include_external_domain)},
                 {"r_core",                          as_double(&cfg.r_core)},
@@ -617,6 +645,37 @@ END BLOCK CONFIG)",
             return pm;
         }
 
+        bool HasHangingFaces(const mfem::Mesh& mesh) {
+            for (int face = 0; face < mesh.GetNumFaces(); ++face) {
+                if (mesh.GetFaceInformation(face).IsNonconformingCoarse()) return true;
+            }
+            return false;
+        }
+
+        void RefineVisualizationMesh(mfem::Mesh& mesh, mfem::GridFunction* field = nullptr) {
+            while (true) {
+                std::vector<bool> marked(static_cast<size_t>(mesh.GetNE()), false);
+                for (int face = 0; face < mesh.GetNumFaces(); ++face) {
+                    const auto info = mesh.GetFaceInformation(face);
+                    if (info.IsNonconformingCoarse()) {
+                        marked[static_cast<size_t>(info.element[0].index)] = true;
+                    }
+                }
+
+                mfem::Array<int> refinements;
+                for (int element = 0; element < mesh.GetNE(); ++element) {
+                    if (marked[static_cast<size_t>(element)]) refinements.Append(element);
+                }
+                if (refinements.Size() == 0) break;
+
+                mesh.GeneralRefinement(refinements, 1, 0);
+                if (field) {
+                    field->FESpace()->Update();
+                    field->Update();
+                }
+            }
+        }
+
     }
 
     void SaveStroidMesh(const StroidMesh &mesh, const std::string &filename, const std::string &comment) {
@@ -659,7 +718,13 @@ END BLOCK CONFIG)",
         SaveVTU(*mesh.mesh, exportName);
     }
 
-    void ViewMesh(mfem::Mesh &mesh, const std::string& title, const VISUALIZATION_MODE mode, const std::string &vishost, int visport) {
+    std::unique_ptr<mfem::Mesh> MakeConformingVisualizationMesh(const mfem::Mesh& mesh) {
+        auto display_mesh = std::make_unique<mfem::Mesh>(mesh);
+        RefineVisualizationMesh(*display_mesh);
+        return display_mesh;
+    }
+
+    void ViewMesh(mfem::Mesh &mesh, const std::string& title, const VISUALIZATION_MODE mode, const std::string &vishost, int visport, const bool conforming_display) {
         mfem::socketstream sol_sock(vishost.c_str(), visport);
         if (!sol_sock.is_open()) {
             std::cerr << "Unable to connect to GLVis server at "
@@ -667,8 +732,13 @@ END BLOCK CONFIG)",
             return;
         }
 
-        mfem::L2_FECollection fec(0, mesh.Dimension());
-        mfem::FiniteElementSpace fes(&mesh, &fec);
+        std::unique_ptr<mfem::Mesh> display_mesh;
+        if (conforming_display && HasHangingFaces(mesh)) {
+            display_mesh = std::make_unique<mfem::Mesh>(mesh);
+        }
+        mfem::Mesh& viewed_mesh = display_mesh ? *display_mesh : mesh;
+        mfem::L2_FECollection fec(0, viewed_mesh.Dimension());
+        mfem::FiniteElementSpace fes(&viewed_mesh, &fec);
         mfem::GridFunction attr_gf(&fes);
         attr_gf = 0.0;
 
@@ -692,44 +762,55 @@ END BLOCK CONFIG)",
                 break;
         }
 
-        sol_sock.precision(8);
-        sol_sock << "solution\n" << mesh << attr_gf;
-        sol_sock << "window_title '" << title << "'\n";
+        // Transfer source coloring so boundary-adjacent regions keep their
+        // original extent when visualization-only children are introduced.
+        if (display_mesh) RefineVisualizationMesh(*display_mesh, &attr_gf);
+
+        sol_sock.precision(std::numeric_limits<double>::max_digits10);
+        sol_sock << "solution\n" << viewed_mesh << attr_gf;
+        sol_sock << "window_title '" << title
+                 << (display_mesh ? " (display subdivisions)" : "") << "'\n";
         sol_sock << "keys iMj\n";
         sol_sock << std::flush;
     }
 
-    void ViewMesh(const stroid::StroidMesh &mesh, const std::string &title, VISUALIZATION_MODE mode, const std::string &vishost, int visport) {
-        ViewMesh(*mesh.mesh, title, mode, vishost, visport);
+    void ViewMesh(const stroid::StroidMesh &mesh, const std::string &title, VISUALIZATION_MODE mode, const std::string &vishost, int visport, const bool conforming_display) {
+        ViewMesh(*mesh.mesh, title, mode, vishost, visport, conforming_display);
     }
 
-    void VisualizeFaceValence(mfem::Mesh& mesh, const std::string &vishost, int visport) {
-        mfem::L2_FECollection fec(0, 3);
-        mfem::FiniteElementSpace fes(&mesh, &fec);
+    void VisualizeFaceValence(mfem::Mesh& mesh, const std::string &vishost, int visport, const bool conforming_display) {
+        mfem::socketstream sol_sock(vishost.c_str(), visport);
+        if (!sol_sock.is_open()) return;
+
+        std::unique_ptr<mfem::Mesh> display_mesh;
+        if (conforming_display && HasHangingFaces(mesh)) {
+            display_mesh = std::make_unique<mfem::Mesh>(mesh);
+        }
+        mfem::Mesh& viewed_mesh = display_mesh ? *display_mesh : mesh;
+        mfem::L2_FECollection fec(0, viewed_mesh.Dimension());
+        mfem::FiniteElementSpace fes(&viewed_mesh, &fec);
         mfem::GridFunction valence_gf(&fes);
+        valence_gf = 0.0;
 
         for (int i = 0; i < mesh.GetNBE(); i++) {
-            int f, o;
-            mesh.GetBdrElementFace(i, &f, &o);
-
-            int e1, e2;
-            mesh.GetFaceElements(f, &e1, &e2);
-
-            int valence = (e2 >= 0) ? 2 : 1;
-            valence_gf(i) = static_cast<double>(valence);
+            const int face = mesh.GetBdrElementFaceIndex(i);
+            const double valence = mesh.GetFaceInformation(face).IsInterior() ? 2.0 : 1.0;
+            int element, side;
+            mesh.GetBdrElementAdjacentElement(i, element, side);
+            valence_gf(element) = std::max(valence_gf(element), valence);
         }
 
-        // View in GLVis
-        mfem::socketstream sol_sock(vishost.c_str(), visport);
-        if (sol_sock.is_open()) {
-            sol_sock << "solution\n" << mesh << valence_gf;
-            sol_sock << "window_title 'Boundary Valence: 1=Surface, 2=Internal'\n";
-            sol_sock << "keys am\n" << std::flush;
-        }
+        if (display_mesh) RefineVisualizationMesh(*display_mesh, &valence_gf);
+
+        sol_sock.precision(std::numeric_limits<double>::max_digits10);
+        sol_sock << "solution\n" << viewed_mesh << valence_gf;
+        sol_sock << "window_title 'Boundary Valence: 1=Surface, 2=Internal"
+                 << (display_mesh ? " (display subdivisions)" : "") << "'\n";
+        sol_sock << "keys am\n" << std::flush;
     }
 
-    void VisualizeFaceValence(const stroid::StroidMesh &mesh, const std::string &vishost, int visport) {
-        VisualizeFaceValence(*mesh.mesh, vishost, visport);
+    void VisualizeFaceValence(const stroid::StroidMesh &mesh, const std::string &vishost, int visport, const bool conforming_display) {
+        VisualizeFaceValence(*mesh.mesh, vishost, visport, conforming_display);
     }
 
     std::expected<StroidMesh, std::string> ParseStroidMesh(std::istream& is) {

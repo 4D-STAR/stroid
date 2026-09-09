@@ -3,9 +3,10 @@ gtest_main = dependency('gtest_main', required: true)
 gtest_nomain_dep = dependency('gtest', main: false, required : true)
 threads_dep = dependency('threads')
 
-# Test files for const
 test_sources = [
-    'stroidTest.cpp'
+    'stroidTest.cpp',
+    'nonconformingTest.cpp',
+    'visualizationTest.cpp'
 ]
 
 foreach test_file : test_sources

@@ -38,6 +38,8 @@ void register_config_bindings(pybind11::module_& m) {
 
             return stroid::config::MeshConfig{
                 .refinement_levels = kwargs.contains("refinement_levels") ? kwargs["refinement_levels"].cast<int>() : ref_level,
+                .vacuum_refinement_levels = kwargs.contains("vacuum_refinement_levels") ? kwargs["vacuum_refinement_levels"].cast<std::optional<int>>() : std::nullopt,
+                .vacuum_outer_refinement_levels = kwargs.contains("vacuum_outer_refinement_levels") ? kwargs["vacuum_outer_refinement_levels"].cast<std::optional<int>>() : std::nullopt,
                 .order = kwargs.contains("order") ? kwargs["order"].cast<int>() : order,
                 .include_external_domain = kwargs.contains("include_external_domain") ? kwargs["include_external_domain"].cast<bool>() : include_external_domain,
                 .r_core = kwargs.contains("r_core") ? kwargs["r_core"].cast<double>() : r_core,
@@ -53,7 +55,7 @@ void register_config_bindings(pybind11::module_& m) {
                 .envelope_id = kwargs.contains("envelope_id") ? kwargs["envelope_id"].cast<size_t>() : envelope_id,
                 .vacuum_id = kwargs.contains("vacuum_id") ? kwargs["vacuum_id"].cast<size_t>() : vacuum_id,
                 .optimization_methods = kwargs.contains("optimization_methods") ? kwargs["optimization_methods"].cast<stroid::config::OptimizationMethods>() : opt_method,
-                .core_mapping = kwargs.contains("core_mapping") ? kwargs["core_mapping"].cast<std::string>() : "spherified"
+                .core_mapping = kwargs.contains("core_mapping") ? kwargs["core_mapping"].cast<std::string>() : "multi_block"
             };
         }))
         .def_property(
@@ -64,6 +66,26 @@ void register_config_bindings(pybind11::module_& m) {
             [](stroid::config::MeshConfig& self, int value) {
                 self.refinement_levels = value;
             }
+        )
+        .def_property(
+            "vacuum_refinement_levels",
+            [](const stroid::config::MeshConfig& self) {
+                return self.vacuum_refinement_levels;
+            },
+            [](stroid::config::MeshConfig& self, std::optional<int> value) {
+                self.vacuum_refinement_levels = value;
+            },
+            "Minimum vacuum interior depth, or None to inherit refinement_levels. Automatic grading may refine further."
+        )
+        .def_property(
+            "vacuum_outer_refinement_levels",
+            [](const stroid::config::MeshConfig& self) {
+                return self.vacuum_outer_refinement_levels;
+            },
+            [](stroid::config::MeshConfig& self, std::optional<int> value) {
+                self.vacuum_outer_refinement_levels = value;
+            },
+            "Minimum vacuum outer-boundary depth, or None to inherit refinement_levels."
         )
         .def_property(
             "order",
@@ -88,8 +110,8 @@ void register_config_bindings(pybind11::module_& m) {
             [](const stroid::config::MeshConfig& self) {
                 return self.r_core;
             },
-            [](stroid::config::MeshConfig& self, int value) {
-                self.order = value;
+            [](stroid::config::MeshConfig& self, double value) {
+                self.r_core = value;
             }
         )
         .def_property(

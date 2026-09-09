@@ -3,13 +3,116 @@
 #include <memory>
 #include <cmath>
 #include <stdexcept>
+#include <algorithm>
+#include <limits>
 
 #include "stroid/config/config.h"
 #include "fourdst/config/config.h"
 
+namespace {
+    void ValidateRefinement(const stroid::config::MeshConfig& config) {
+        if (config.refinement_levels.value_or(4) < 0 ||
+            config.vacuum_refinement_levels.value_or(0) < 0 ||
+            config.vacuum_outer_refinement_levels.value_or(0) < 0) {
+            throw std::invalid_argument("Refinement levels must be non-negative.");
+        }
+        if (config.order.value_or(3) < 1) {
+            throw std::invalid_argument("Geometry order must be at least one.");
+        }
+
+        if (!config.vacuum_refinement_levels && !config.vacuum_outer_refinement_levels) return;
+        if (!config.include_external_domain.value_or(true)) {
+            throw std::invalid_argument("Vacuum refinement overrides require an external domain.");
+        }
+
+        const double r_core = config.r_core.value_or(0.25);
+        const double r_star = config.r_star.value_or(1.0);
+        const double r_infinity = config.r_infinity.value_or(6.0);
+        if (!std::isfinite(r_core) || !std::isfinite(r_star) || !std::isfinite(r_infinity) ||
+            r_core <= 0.0 || r_star <= r_core || r_infinity <= r_star) {
+            throw std::invalid_argument("Vacuum refinement requires finite radii with 0 < r_core < r_star < r_infinity.");
+        }
+        if (!std::isfinite(config.flattening.value_or(0.0)) || config.flattening.value_or(0.0) >= 1.0) {
+            throw std::invalid_argument("Vacuum refinement requires finite flattening < 1.");
+        }
+
+        const auto core = config.core_id.value_or(1);
+        const auto envelope = config.envelope_id.value_or(2);
+        const auto vacuum = config.vacuum_id.value_or(3);
+        const auto surface = config.surface_bdr_id.value_or(1);
+        const auto outer = config.inf_bdr_id.value_or(2);
+        const auto valid_id = [](size_t id) {
+            return id > 0 && id <= static_cast<size_t>(std::numeric_limits<int>::max());
+        };
+        if (!valid_id(core) || !valid_id(envelope) || !valid_id(vacuum) ||
+            !valid_id(surface) || !valid_id(outer) || core == envelope ||
+            core == vacuum || envelope == vacuum || surface == outer) {
+            throw std::invalid_argument("Vacuum refinement requires distinct positive material IDs and distinct positive boundary IDs representable as int.");
+        }
+    }
+
+    void RefineReference(mfem::Mesh& mesh, const stroid::config::MeshConfig& config) {
+        const int stellar_level = config.refinement_levels.value_or(4);
+        const int bulk_level = config.vacuum_refinement_levels.value_or(stellar_level);
+        const int outer_level = config.vacuum_outer_refinement_levels.value_or(stellar_level);
+        if (!config.include_external_domain.value_or(true) ||
+            (bulk_level == stellar_level && outer_level == stellar_level)) {
+            for (int level = 0; level < stellar_level; ++level) mesh.UniformRefinement();
+            return;
+        }
+
+        mesh.EnsureNCMesh();
+        const int vacuum_id = static_cast<int>(config.vacuum_id.value_or(3));
+        const double r_star = config.r_star.value_or(1.0);
+        const double r_infinity = config.r_infinity.value_or(6.0);
+        const double tolerance = 128.0 * std::numeric_limits<double>::epsilon() * r_infinity;
+
+        while (true) {
+            std::vector<bool> marked(static_cast<size_t>(mesh.GetNE()), false);
+            for (int element = 0; element < mesh.GetNE(); ++element) {
+                int target = stellar_level;
+                if (mesh.GetAttribute(element) == vacuum_id) {
+                    target = bulk_level;
+                    double minimum = std::numeric_limits<double>::infinity();
+                    double maximum = 0.0;
+                    const mfem::Element* hex = mesh.GetElement(element);
+                    for (int vertex = 0; vertex < hex->GetNVertices(); ++vertex) {
+                        const double* position = mesh.GetVertex(hex->GetVertices()[vertex]);
+                        const double radius = std::max({std::abs(position[0]), std::abs(position[1]), std::abs(position[2])});
+                        minimum = std::min(minimum, radius);
+                        maximum = std::max(maximum, radius);
+                    }
+                    if (std::abs(minimum - r_star) <= tolerance) target = std::max(target, stellar_level);
+                    if (std::abs(maximum - r_infinity) <= tolerance) target = std::max(target, outer_level);
+                }
+                marked[static_cast<size_t>(element)] = mesh.ncmesh->GetElementDepth(element) < target;
+            }
+
+            for (int face = 0; face < mesh.GetNumFaces(); ++face) {
+                const auto info = mesh.GetFaceInformation(face);
+                if (!info.IsNonconformingFine() || !info.IsLocal()) continue;
+                const int first = info.element[0].index;
+                const int second = info.element[1].index;
+                if ((mesh.GetAttribute(first) == vacuum_id) == (mesh.GetAttribute(second) == vacuum_id)) continue;
+                const int coarse = mesh.ncmesh->GetElementDepth(first) < mesh.ncmesh->GetElementDepth(second) ? first : second;
+                marked[static_cast<size_t>(coarse)] = true;
+            }
+
+            mfem::Array<int> refinements;
+            for (int element = 0; element < mesh.GetNE(); ++element) {
+                if (marked[static_cast<size_t>(element)]) refinements.Append(element);
+            }
+            if (refinements.Size() == 0) break;
+            mesh.GeneralRefinement(refinements, 1, 1);
+        }
+        mesh.CheckBdrElementOrientation(true);
+    }
+}
+
 namespace stroid::topology {
 
     std::unique_ptr<mfem::Mesh> BuildSkeleton(const fourdst::config::Config<config::MeshConfig> & config) {
+        ValidateRefinement(*config);
         const std::string core_mapping = config->core_mapping.value_or("spherified");
         if (core_mapping != "spherified" && core_mapping != "multi_block") {
             throw std::invalid_argument("Unknown core_mapping: " + core_mapping);
@@ -129,19 +232,12 @@ namespace stroid::topology {
 
     // ReSharper disable once CppUseInternalLinkage
     void Finalize(mfem::Mesh& mesh, const fourdst::config::Config<config::MeshConfig> &config) {
+        ValidateRefinement(*config);
         mesh.FinalizeTopology();
         mesh.Finalize();
         mesh.CheckElementOrientation(true);
         mesh.CheckBdrElementOrientation(true);
-        for (int i = 0; i < config->refinement_levels; ++i) {
-            mesh.UniformRefinement();
-        }
-
-        if (!mesh.Conforming()) {
-            std::cerr << "WARNING: Mesh has been detected to be non conforming!" << std::endl;
-        }
-
-
+        RefineReference(mesh, *config);
     }
 
 }

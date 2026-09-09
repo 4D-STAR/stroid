@@ -1,4 +1,4 @@
-project('stroid', 'cpp', meson_version : '>= 1.3.0', version : 'v0.5.0', default_options : ['cpp_std=c++23'])
+project('stroid', 'cpp', meson_version : '>= 1.3.0', version : 'v0.6.0', default_options : ['cpp_std=c++23'])
 
 subdir('build-check')
 

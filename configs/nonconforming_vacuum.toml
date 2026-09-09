@@ -1,0 +1,17 @@
+[main]
+# Absolute minimum depths from the initial block topology.
+refinement_levels = 4
+vacuum_refinement_levels = 2
+# Omit to inherit refinement_levels at the vacuum outer boundary.
+# vacuum_outer_refinement_levels = 4
+order = 3
+include_external_domain = true
+core_mapping = "multi_block"
+r_core = 0.25
+r_star = 1.0
+r_infinity = 6.0
+flattening = 0.0
+
+[main.optimization_methods]
+tmop = false
+smoothstep = true

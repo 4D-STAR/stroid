@@ -26,7 +26,8 @@ namespace {
         }
 
         double coordinate = (logical_radius - r_star) / radial_extent;
-        const double tolerance = 1024.0 * std::numeric_limits<double>::epsilon() * std::max({1.0, std::abs(r_star), std::abs(r_infinity)}) / radial_extent;
+        const double tolerance = std::min(1.0e-8, 1024.0 * std::numeric_limits<double>::epsilon() *
+            std::max(std::abs(r_star), std::abs(r_infinity)) / radial_extent);
 
         if (coordinate < -tolerance || coordinate > 1.0 + tolerance) {
             throw std::runtime_error(std::format("Logical exterior coordinate {} lies outside [0, 1].", coordinate));
@@ -40,9 +41,7 @@ namespace {
 
 namespace stroid::topology {
     void PromoteToHighOrder(mfem::Mesh &mesh, const fourdst::config::Config<config::MeshConfig> &config) {
-        const auto* fec = new mfem::H1_FECollection(config->order.value(), mesh.Dimension());
-        auto* fes = new mfem::FiniteElementSpace(&mesh, fec, mesh.SpaceDimension());
-        mesh.SetNodalFESpace(fes);
+        mesh.SetCurvature(config->order.value(), false, mesh.SpaceDimension(), mfem::Ordering::byNODES);
     }
 
     void ProjectMesh(mfem::Mesh &mesh, const fourdst::config::Config<config::MeshConfig> &config) {
@@ -59,16 +58,15 @@ namespace stroid::topology {
         const int nElem = mesh.GetNE();
 
         std::vector<bool> processed(nDofs, false);
-        mfem::Array<int> vdofs;
+        mfem::Array<int> dofs;
         mfem::Vector pos(vDim);
 
         for (int elemID = 0; elemID < nElem; ++elemID) {
             const int attrID = mesh.GetAttribute(elemID);
-            fes->GetElementVDofs(elemID, vdofs);
+            fes->GetElementDofs(elemID, dofs);
 
-            for (int dofID = 0; dofID < vdofs.Size(); ++dofID) {
-                const int vDof = vdofs[dofID];
-                const int scalar_dof = (fes->GetOrdering() == mfem::Ordering::byNODES) ? vDof / vDim : vDof % nDofs;
+            for (int dofID = 0; dofID < dofs.Size(); ++dofID) {
+                const int scalar_dof = dofs[dofID] >= 0 ? dofs[dofID] : -1 - dofs[dofID];
 
                 if (processed[scalar_dof]) {
                     continue; // Skip already processed dofs. This avoids doing multiple transformations of a node if it was already transformed by a neighbor
@@ -88,6 +86,12 @@ namespace stroid::topology {
             }
         }
 
+        // A mapped hanging node must lie on the coarse polynomial face. Mapping
+        // every node independently does not preserve this geometric constraint.
+        mfem::Vector true_nodes;
+        nodes.GetTrueDofs(true_nodes);
+        nodes.SetFromTrueDofs(true_nodes);
+        mesh.NodesUpdated();
     }
 
     std::unique_ptr<ScalarMeshField> BuildExteriorCoordinate(
@@ -163,6 +167,10 @@ namespace stroid::topology {
                 processed[static_cast<size_t>(global_dof)] = true;
             }
         }
+
+        mfem::Vector true_values;
+        field->values->GetTrueDofs(true_values);
+        field->values->SetFromTrueDofs(true_values);
 
         for (int dof = 0; dof < scalar_dofs; ++dof) {
             if (!processed[static_cast<size_t>(dof)]) throw std::runtime_error(std::format("Exterior-coordinate scalar DOF {} was not assigned.", dof));

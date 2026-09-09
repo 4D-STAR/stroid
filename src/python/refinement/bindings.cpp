@@ -7,5 +7,5 @@
 namespace py = pybind11;
 
 void register_refinement_bindings(pybind11::module_ &m) {
-    m.def("UniformRefinement", &stroid::refinement::UniformRefinement, py::arg("mesh"), py::arg("levels"), "Perform uniform refinement without breaking the higher order structure");
+    m.def("UniformRefinement", &stroid::refinement::UniformRefinement, py::arg("mesh"), py::arg("levels"), "Refine every current leaf by the requested additional levels, preserving hanging-node constraints and rebuilding high-order geometry. Initial configuration targets remain unchanged.");
 }

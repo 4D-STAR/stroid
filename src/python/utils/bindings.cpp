@@ -25,7 +25,14 @@ void register_stats_bindings(pybind11::module_ &m) {
      .value("CENTROID", stroid::stats::MeshStatFeatures::CENTROID)
      .value("CONFIG_META", stroid::stats::MeshStatFeatures::CONFIG_META)
      .value("BOUNDING_BOX", stroid::stats::MeshStatFeatures::BOUNDING_BOX)
-     .export_values();
+     .value("REFINEMENT", stroid::stats::MeshStatFeatures::REFINEMENT)
+     .export_values()
+     .def("__or__", [](stroid::stats::MeshStatFeatures lhs, stroid::stats::MeshStatFeatures rhs) {
+         return lhs | rhs;
+     }, py::is_operator())
+     .def("__and__", [](stroid::stats::MeshStatFeatures lhs, stroid::stats::MeshStatFeatures rhs) {
+         return lhs & rhs;
+     }, py::is_operator());
 
     py::class_<stroid::stats::RadiusStats>(statsMod, "RadiusStats")
     .def_readonly("min", &stroid::stats::RadiusStats::min)
@@ -51,7 +58,20 @@ void register_stats_bindings(pybind11::module_ &m) {
 
     py::class_<stroid::stats::ConformityStats>(statsMod, "ConformityStats")
     .def_readonly("conforming", &stroid::stats::ConformityStats::conforming)
+    .def_readonly("hierarchy_enabled", &stroid::stats::ConformityStats::hierarchy_enabled)
     .def_readonly("n_nonconforming_faces", &stroid::stats::ConformityStats::n_nonconforming_faces);
+
+    py::class_<stroid::stats::RegionRefinementStats>(statsMod, "RegionRefinementStats")
+    .def_readonly("min_depth", &stroid::stats::RegionRefinementStats::min_depth)
+    .def_readonly("max_depth", &stroid::stats::RegionRefinementStats::max_depth);
+
+    py::class_<stroid::stats::RefinementStats>(statsMod, "RefinementStats")
+    .def_readonly("all", &stroid::stats::RefinementStats::all)
+    .def_readonly("core", &stroid::stats::RefinementStats::core)
+    .def_readonly("envelope", &stroid::stats::RefinementStats::envelope)
+    .def_readonly("vacuum", &stroid::stats::RefinementStats::vacuum)
+    .def_readonly("geometry_dofs", &stroid::stats::RefinementStats::geometry_dofs)
+    .def_readonly("geometry_true_dofs", &stroid::stats::RefinementStats::geometry_true_dofs);
 
     py::class_<stroid::stats::JacobianStats>(statsMod, "JacobianStats")
     .def_readonly("detJ_min", &stroid::stats::JacobianStats::detJ_min)
@@ -128,6 +148,7 @@ void register_stats_bindings(pybind11::module_ &m) {
     .def_readonly("ellipticity", &stroid::stats::MeshStats::ellipticity)
     .def_readonly("bowing", &stroid::stats::MeshStats::bowing)
     .def_readonly("conformity", &stroid::stats::MeshStats::conformity)
+    .def_readonly("refinement", &stroid::stats::MeshStats::refinement)
     .def_readonly("jacobian", &stroid::stats::MeshStats::jacobian)
     .def_readonly("jacobian_stellar", &stroid::stats::MeshStats::jacobian_stellar)
     .def_readonly("jacobian_vacuum", &stroid::stats::MeshStats::jacobian_vacuum)
@@ -174,7 +195,13 @@ void register_type_bindings(py::module_ &m) {
     .def("has_rmesh", [](const stroid::StroidMesh& self) {
         return self.reference_mesh != nullptr;
     })
-    .def("mesh_stats", &stroid::StroidMesh::mesh_stats)
+    .def("mesh_stats", [](const stroid::StroidMesh& self, bool use_ref_mesh) {
+        auto result = self.mesh_stats(use_ref_mesh);
+        if (!result.has_value()) {
+            throw std::runtime_error(result.error());
+        }
+        return result.value();
+    }, py::arg("use_ref_mesh") = false)
     .def("__repr__", [](const stroid::StroidMesh& self) {
        return std::format("<StroidMesh [{}]: NE: {}, NV: {}>", (self.type == stroid::MFEM_MESH_TYPE::SERIAL) ? "SERIAL" : "PARALLEL", self.mesh->GetNE(), self.mesh->GetNV());
     });
@@ -184,4 +211,3 @@ void register_utils_bindings(pybind11::module_ &m) {
     register_type_bindings(m);
     register_stats_bindings(m);
 }
-

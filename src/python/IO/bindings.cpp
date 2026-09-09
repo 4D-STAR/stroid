@@ -35,20 +35,29 @@ void register_io_bindings(pybind11::module_ &m) {
     );
     m.def(
         "ViewMesh",
-        py::overload_cast<const stroid::StroidMesh&, const std::string&, stroid::IO::VISUALIZATION_MODE, const std::string&, int>(&stroid::IO::ViewMesh),
+        py::overload_cast<const stroid::StroidMesh&, const std::string&, stroid::IO::VISUALIZATION_MODE, const std::string&, int, bool>(&stroid::IO::ViewMesh),
         py::arg("mesh"),
         py::arg("title")="",
         py::arg("mode")=stroid::IO::VISUALIZATION_MODE::ELEMENT_ID,
         py::arg("host")="localhost",
-        py::arg("port")=19916
+        py::arg("port")=19916,
+        py::arg("conforming_display")=false,
+        "Display the mesh in GLVis. By default, subdivide a temporary copy to avoid "
+        "rendering gaps at curved hanging interfaces, preserving the source geometry "
+        "and coloring. Extra display edges do not change computational DOFs. Set "
+        "conforming_display=False to inspect the original element layout."
     );
 
     m.def(
         "VisualizeFaceValence",
-        py::overload_cast<const stroid::StroidMesh&, const std::string&, int>(&stroid::IO::VisualizeFaceValence),
+        py::overload_cast<const stroid::StroidMesh&, const std::string&, int, bool>(&stroid::IO::VisualizeFaceValence),
         py::arg("mesh"),
         py::arg("host")="localhost",
-        py::arg("port")=19916
+        py::arg("port")=19916,
+        py::arg("conforming_display")=true,
+        "Display boundary-adjacent element valence: zero for untagged elements, one "
+        "for surface faces, and two for internal faces (maximum if several touch an "
+        "element). Values are preserved through optional display-only subdivision."
     );
 
     m.def(
